@@ -1,0 +1,33 @@
+name: Sauvegarde mensuelle
+# Le 1er de chaque mois : copie complète des données, dans une archive 7z protégée par mot de passe.
+# Secret GitHub requis : SAUVEGARDE_SECRET (même valeur que la clé saisie dans Administration › Sauvegarde).
+on:
+  schedule:
+    - cron: "23 4 1 * *"
+  workflow_dispatch:
+jobs:
+  sauvegarde:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Export chiffré
+        env:
+          SECRET: ${{ secrets.SAUVEGARDE_SECRET }}
+        run: |
+          set -euo pipefail
+          test -n "$SECRET" || { echo "Secret SAUVEGARDE_SECRET absent"; exit 1; }
+          jq -n --arg k "$SECRET" '{p_cle:$k}' > req.json
+          curl -sf -X POST "https://ttkbmvkfhagzgrgeslhy.supabase.co/rest/v1/rpc/api_sauvegarde_auto" \
+            -H "apikey: sb_publishable_O9KYePQQSLC48vFn0E0Djw_sGtY_Nb5" -H "Content-Type: application/json" \
+            --data @req.json -o sauvegarde.json
+          rm req.json
+          test "$(jq -r .ok sauvegarde.json)" = "true" || { jq -r .erreur sauvegarde.json; rm sauvegarde.json; exit 1; }
+          NOM="sauvegarde_lmstt_$(date +%Y-%m-%d)"
+          mv sauvegarde.json "$NOM.json"
+          7z a -t7z -mhe=on -p"$SECRET" "$NOM.7z" "$NOM.json" > /dev/null
+          rm "$NOM.json"
+          echo "NOM=$NOM" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.NOM }}
+          path: ${{ env.NOM }}.7z
+          retention-days: 90

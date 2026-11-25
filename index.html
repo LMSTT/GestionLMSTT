@@ -282,7 +282,13 @@ pre,.scroll{overflow-x:auto}
   <p>Télécharge une copie complète des données (catalogue, ventes, mouvements, paramètres, utilisateurs sans leurs codes, journal) au format JSON.</p>
   <p class="muted" id="lastSave"></p>
   <button id="saveBtn" type="button">Télécharger la sauvegarde</button>
-  <p class="muted">Conseil : une sauvegarde par mois, rangée dans le dossier SharePoint de la boutique. L'offre gratuite de la base ne fait pas de sauvegarde automatique.</p></div>
+  <p class="muted">Conseil : range-la dans le dossier SharePoint de la boutique.</p></div>
+ <div class="card"><h2>Sauvegarde automatique mensuelle</h2>
+  <p>Le 1er de chaque mois, GitHub récupère une copie complète des données et la range dans une archive <b>.7z protégée par mot de passe</b>, gardée 90 jours.</p>
+  <p class="muted" id="autoEtat"></p>
+  <label for="cleAuto">Clé secrète (16 caractères min., lettres, chiffres, - ou _)</label>
+  <div class="row"><input id="cleAuto" type="password" autocomplete="off"><button id="cleGen" type="button" class="alt" style="flex:0 1 auto">Générer</button><button id="cleOk" type="button" style="flex:0 1 auto">Enregistrer la clé</button></div>
+  <p class="muted">Cette même clé sert de mot de passe pour ouvrir les archives : note-la dans un endroit sûr, elle ne sera plus jamais affichée.</p></div>
 </section>
 <section id="catalogue">
  <div class="card"><h2 id="cTitle">Ajouter un article</h2>
@@ -545,7 +551,10 @@ const PRM=[['modes','Modes de règlement'],['categories','Catégories d\'article
 function renderParams(){$('prmBox').innerHTML=PRM.map(([k,t])=>`<div class="card"><h3>${t}</h3><label for="prm-${k}">Une valeur par ligne</label><textarea id="prm-${k}" rows="6">${esc((ADM.parametres[k]||[]).join('\n'))}</textarea><button type="button" data-prm="${k}" style="margin-top:10px">Enregistrer</button></div>`).join('')}
 $('prmBox').onclick=async e=>{const k=e.target.dataset.prm;if(!k)return;const vals=[...new Set($('prm-'+k).value.split('\n').map(s=>s.trim()).filter(Boolean))];if(!vals.length)return toast('La liste ne peut pas être vide');
  const j=await rpc('api_admin_parametre',{p_pin:PIN,p_cle:k,p_valeurs:vals});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');toast('Liste enregistrée ✓');await loadAdmin();renderParams();load()};
-function renderSave(){const l=ADM.journal.find(x=>x.action==='Export de sauvegarde');$('lastSave').textContent=l?'Dernière sauvegarde : '+fdt(l.quand)+' par '+l.nom:'Aucune sauvegarde téléchargée pour l\'instant.'}
+async function etatAuto(){const j=await rpc('api_admin_etat_sauvegarde',{p_pin:PIN});if(!j||!j.ok)return;$('autoEtat').textContent=(j.cle_definie_le?'Clé définie le '+fdt(j.cle_definie_le):'Aucune clé définie : sauvegarde automatique inactive.')+(j.derniere_auto?' · Dernière sauvegarde automatique : '+fdt(j.derniere_auto):'')}
+function renderSave(){etatAuto();const l=ADM.journal.find(x=>x.action==='Export de sauvegarde');$('lastSave').textContent=l?'Dernière sauvegarde : '+fdt(l.quand)+' par '+l.nom:'Aucune sauvegarde téléchargée pour l\'instant.'}
+$('cleGen').onclick=()=>{const a=new Uint8Array(18);crypto.getRandomValues(a);$('cleAuto').value=[...a].map(x=>'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'[x%57]).join('');$('cleAuto').type='text'};
+$('cleOk').onclick=async()=>{const k=$('cleAuto').value.trim();const j=await rpc('api_admin_cle_sauvegarde',{p_pin:PIN,p_cle:k});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');toast('Clé enregistrée ✓ Copie-la maintenant dans GitHub');etatAuto()};
 $('saveBtn').onclick=async()=>{const j=await rpc('api_admin_export',{p_pin:PIN});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');
  const blob=new Blob([JSON.stringify(j,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde_lmstt_'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Sauvegarde téléchargée ✓');await loadAdmin();renderSave()};
 
