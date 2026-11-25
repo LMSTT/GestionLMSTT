@@ -52,6 +52,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 .usr{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .top{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:10px}.ttl{text-align:center}.ttl p{margin:2px 0 0}.logo{justify-self:start;background:#fff;border-radius:10px;padding:6px;line-height:0}.logo img{height:clamp(44px,8vw,64px);width:auto}.usr{justify-self:end}
 @media(max-width:600px){.top{grid-template-columns:auto 1fr auto}.ttl p{display:none}}
+.pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}.pager button{min-width:44px;padding:8px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.pager button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.pager .muted{margin-left:auto}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -94,7 +95,7 @@ pre,.scroll{overflow-x:auto}
 
 <section id="ventes">
  <div class="card"><div class="row"><div><label for="venS">Saison</label><select id="venS" class="saisonSel"></select></div><div><label for="venQ">Rechercher</label><input id="venQ" placeholder="client, article, vendeur"></div><div class="mob"><label for="venTri">Trier par</label><select id="venTri"><option value="date|-1">Date (récent d'abord)</option><option value="date|1">Date (ancien d'abord)</option><option value="ach|1">Client (A→Z)</option><option value="lib|1">Article (A→Z)</option><option value="mt|-1">Montant (+ → −)</option><option value="mt|1">Montant (− → +)</option><option value="qte|-1">Quantité</option><option value="mode|1">Règlement</option><option value="user|1">Vendeur</option><option value="num|-1">N° de vente</option></select></div><button id="csv" class="alt adm" type="button" style="flex:0 1 auto">Exporter (Excel)</button></div>
- <div class="scroll" style="margin-top:12px"><table class="stack"><thead id="venH"><tr><th data-k="date">Date</th><th data-k="num">N°</th><th data-k="ach">Client</th><th data-k="lib">Article</th><th class="n" data-k="qte">Qté</th><th class="n" data-k="mt">Montant</th><th data-k="mode">Règlement</th><th data-k="user">Vendeur</th><th></th></tr></thead><tbody id="venT"></tbody></table></div></div>
+ <div class="scroll" style="margin-top:12px"><table class="stack"><thead id="venH"><tr><th data-k="date">Date</th><th data-k="num">N°</th><th data-k="ach">Client</th><th data-k="lib">Article</th><th class="n" data-k="qte">Qté</th><th class="n" data-k="mt">Montant</th><th data-k="mode">Règlement</th><th data-k="user">Vendeur</th><th></th></tr></thead><tbody id="venT"></tbody></table></div><nav id="venP" class="pager" aria-label="Pages des ventes"></nav></div>
 </section>
 
 <section id="entrees">
@@ -217,12 +218,14 @@ function renderStocks(){
   const t=s<=0?'<span class="tag t-r">Rupture</span>':c.seuil&&s<=c.seuil?'<span class="tag t-a">Alerte</span>':'<span class="tag t-o">OK</span>';
   return `<tr><td><b>${esc(label(c))}</b><br><span class="muted">${esc(c.ref)}</span></td><td>${esc(c.cat)}</td><td class="n"><b>${s}</b></td><td class="n">${c.seuil||'–'}</td><td>${c.statut==='Inactif'?'<span class="tag">Inactif</span>':t}</td><td class="n adm">${eur(s*c.pa)}</td><td class="n">${eur(c.pv)}</td></tr>`}).join('')||'<tr><td colspan="7" class="muted">Aucun article.</td></tr>';
 }
-let vSort={k:'date',d:-1};
+let vSort={k:'date',d:-1},vPage=1;const PP=10;
 function renderVentes(){
  const s=$('venS').value,q=$('venQ').value.toLowerCase();
  const L=S.ventes.filter(v=>saisonOf(v.date)===s&&(!q||(v.ach+v.lib+v.user).toLowerCase().includes(q))).sort((a,b)=>{const k=vSort.k,x=k==='date'?a.date+(a.heure||''):a[k],y=k==='date'?b.date+(b.heure||''):b[k];const c=typeof x==='number'?x-y:String(x??'').localeCompare(String(y??''),'fr',{sensitivity:'base',numeric:true});return (c||a.num.localeCompare(b.num))*vSort.d});
  for(const th of $('venH').querySelectorAll('th[data-k]')){const on=th.dataset.k===vSort.k;th.setAttribute('aria-sort',on?(vSort.d>0?'ascending':'descending'):'none');th.dataset.ar=on?(vSort.d>0?' ▲':' ▼'):''}
- $('venT').innerHTML=L.map(v=>`<tr><td style="white-space:nowrap">${fdate(v.date)}${v.heure?' · '+esc(v.heure):''}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${esc(v.mode)}</td><td>${esc(v.user)}</td><td><button class="del adm" data-delv="${esc(v.num)}" type="button">Annuler</button></td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
+ const nbP=Math.max(1,Math.ceil(L.length/PP));if(vPage>nbP)vPage=nbP;
+ $('venP').innerHTML=nbP>1?`<button type="button" data-p="${vPage-1}" ${vPage===1?'disabled':''} aria-label="Page précédente">‹</button>`+Array.from({length:nbP},(_,i)=>i+1).map(i=>`<button type="button" data-p="${i}"${i===vPage?' class="on" aria-current="page"':''}>${i}</button>`).join('')+`<button type="button" data-p="${vPage+1}" ${vPage===nbP?'disabled':''} aria-label="Page suivante">›</button><span class="muted">${L.length} ventes</span>`:'';
+ $('venT').innerHTML=L.slice((vPage-1)*PP,vPage*PP).map(v=>`<tr><td style="white-space:nowrap">${fdate(v.date)}${v.heure?' · '+esc(v.heure):''}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${esc(v.mode)}</td><td>${esc(v.user)}</td><td><button class="del adm" data-delv="${esc(v.num)}" type="button">Annuler</button></td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
 }
 function renderMv(){
  const L=[...S.appros.map(a=>({...a,t:'Entrée',k:'entree',d:`${a.four} · ${a.cde} · ${eur(a.pa)} /u`})),...S.ajust.map(j=>({...j,t:'Ajustement',k:'ajustement',d:j.motif+(j.com?' · '+j.com:'')}))].sort((a,b)=>b.date.localeCompare(a.date));
@@ -315,9 +318,10 @@ $('csv').onclick=()=>{const s=$('venS').value,L=S.ventes.filter(v=>saisonOf(v.da
  const rows=[['Date','N°','Client','Article','Réf.','Qté','Montant','PA unitaire','Règlement','Vendeur','Commentaire'],...L.map(v=>[v.date,v.num,v.ach,v.lib,v.ref,v.qte,String(v.mt).replace('.',','),String(v.pa).replace('.',','),v.mode,v.user,v.com])];
  const blob=new Blob(['﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ventes_'+s+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 for(const id of ['stkQ','stkF'])$(id).oninput=renderStocks;
-for(const id of ['venS','venQ'])$(id).oninput=renderVentes;
-$('venTri').onchange=e=>{const [k,d]=e.target.value.split('|');vSort={k,d:+d};renderVentes()};
-$('venH').onclick=e=>{const th=e.target.closest('th[data-k]');if(!th)return;const k=th.dataset.k;vSort=vSort.k===k?{k,d:-vSort.d}:{k,d:['date','num','qte','mt'].includes(k)?-1:1};renderVentes()};
+for(const id of ['venS','venQ'])$(id).oninput=()=>{vPage=1;renderVentes()};
+$('venP').onclick=e=>{const b=e.target.closest('button[data-p]');if(!b||b.disabled)return;vPage=+b.dataset.p;renderVentes();$('venT').closest('.card').scrollIntoView({behavior:'smooth',block:'start'})};
+$('venTri').onchange=e=>{const [k,d]=e.target.value.split('|');vSort={k,d:+d};vPage=1;renderVentes()};
+$('venH').onclick=e=>{const th=e.target.closest('th[data-k]');if(!th)return;const k=th.dataset.k;vSort=vSort.k===k?{k,d:-vSort.d}:{k,d:['date','num','qte','mt'].includes(k)?-1:1};vPage=1;renderVentes()};
 $('bS').oninput=renderBilan;
 
 /* ---------- démarrage ---------- */
