@@ -53,7 +53,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 .tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}.t-r{background:var(--red);color:#fff}.t-a{background:#f0a400;color:#222}.t-o{background:light-dark(#e3f2e8,#1c3a28);color:var(--ok)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.row>*{flex:1 1 180px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:10px;font-weight:700;display:none;z-index:9;max-width:90vw}
-body.no-caisse .need-caisse,body.no-stocks .need-stocks,body.no-ventes .need-ventes,body.no-ventes_annuler .need-ventes_annuler,body.no-entrees .need-entrees,body.no-bilan .need-bilan,body.no-catalogue .need-catalogue,body.no-pa .need-pa,body.no-admin .need-admin{display:none!important}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}#who{font-size:14px;opacity:.9}button.out{color:#fff;border-color:#fff;min-height:36px;padding:6px 12px}
+body.no-caisse .need-caisse,body.no-stocks .need-stocks,body.no-ventes .need-ventes,body.no-ventes_annuler .need-ventes_annuler,body.no-entrees .need-entrees,body.no-bilan .need-bilan,body.no-catalogue .need-catalogue,body.no-pa .need-pa,body.no-admin .need-admin,body.no-equipementier .need-equipementier{display:none!important}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}#who{font-size:14px;opacity:.9}button.out{color:#fff;border-color:#fff;min-height:36px;padding:6px 12px}
 #login{position:fixed;inset:0;background:var(--blue);display:grid;place-items:center;padding:16px;z-index:20}#login form{width:min(380px,100%)}
 #venH th[data-k]{cursor:pointer;user-select:none;white-space:nowrap}#venH th[data-k]:hover{color:var(--blue)}#venH th[data-k]::after{content:attr(data-ar);color:var(--blue)}
 .mob{display:none}@media(max-width:600px){.mob{display:block}}
@@ -82,9 +82,10 @@ pre,.scroll{overflow-x:auto}
 @media(prefers-reduced-motion:no-preference){section.on{animation:f .2s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
 <header><div class="top"><a class="logo" href="https://lemanssarthetennisdetable.net/" target="_blank" rel="noopener" title="Site du Le Mans Sarthe Tennis de Table (nouvel onglet)"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table – ouvrir le site du club"></a><div class="ttl"><h1>Espace de Gestion LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
-<nav id="nav"><a href="#accueil" data-g="accueil">Accueil</a><a href="#compte" data-g="compte">Mon compte</a><a href="#caisse" data-g="boutique" id="navBq">Boutique</a><a href="#adm-users" data-g="admin" class="need-admin">Administration</a></nav></header>
+<nav id="nav"><a href="#accueil" data-g="accueil">Accueil</a><a href="#compte" data-g="compte">Mon compte</a><a href="#caisse" data-g="boutique" id="navBq">Boutique</a><a href="#eq-bord" data-g="equip" class="need-equipementier">Équipementier</a><a href="#adm-users" data-g="admin" class="need-admin">Administration</a></nav></header>
 <nav id="subC" class="subn" aria-label="Mon compte"><a href="#compte">Mes infos</a><a href="#mesventes">Mes ventes</a><a href="#acces">Accès</a><a href="#appareils">Mes appareils</a></nav>
 <nav id="sub" class="subn" aria-label="Boutique"><a class="need-caisse" href="#caisse">Caisse</a><a class="need-stocks" href="#stocks">Stocks</a><a class="need-ventes" href="#ventes">Ventes</a><a class="need-entrees" href="#entrees">Entrées &amp; ajustements</a><a class="need-bilan" href="#bilan">Bilan</a><a class="need-catalogue" href="#catalogue">Catalogue</a></nav>
+<nav id="subE" class="subn" aria-label="Équipementier"><a href="#eq-bord">Tableau de bord</a><a href="#eq-ca">CA Dauphin</a><a href="#eq-dot">Dotations</a></nav>
 <nav id="subA" class="subn" aria-label="Administration"><a href="#adm-users">Utilisateurs</a><a href="#adm-sessions">Sessions</a><a href="#adm-journal">Journal</a><a href="#adm-params">Paramètres</a><a href="#adm-save">Sauvegarde</a></nav>
 <main>
 <p id="status"></p>
@@ -270,6 +271,44 @@ pre,.scroll{overflow-x:auto}
   <h3>Vos droits</h3><p>Toute personne concernée peut demander l'accès, la rectification ou l'effacement de ses données (dans la limite des obligations comptables), en s'adressant au responsable de la boutique ou au président du club. En cas de difficulté : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr</a>.</p>
   <p class="muted">Utilisateurs : ne saisissez dans les commentaires aucune information sans rapport avec la vente (santé, situation personnelle…).</p></div>
 </section>
+<section id="eq-bord">
+ <div class="row" style="margin-bottom:14px"><div style="max-width:260px"><label for="eqS">Saison</label><select id="eqS" class="eqSai"></select></div><p class="muted" style="flex:2 1 300px;margin:0">Partenariat Tibhar / Dauphin — <b>confidentiel</b>, visible par toi seul.</p></div>
+ <div class="kpis" id="eqKpi"></div>
+ <div class="grid">
+  <div class="card"><h3>CA Dauphin par mois</h3><div id="eqMois"></div></div>
+  <div class="card"><h3>Dotations par catégorie</h3><div id="eqCat"></div></div>
+  <div class="card"><h3>Paramètres de la saison</h3>
+   <label for="eqDot">Montant de la dotation (€)</label><input id="eqDot" type="number" min="0" step="0.01">
+   <label for="eqObj" style="margin-top:10px">Objectif de CA Dauphin (€)</label><input id="eqObj" type="number" min="0" step="0.01">
+   <label for="eqNotes" style="margin-top:10px">Notes (convention, contact…)</label><textarea id="eqNotes" rows="3"></textarea>
+   <button id="eqSOk" type="button" style="margin-top:10px">Enregistrer</button></div>
+ </div>
+</section>
+<section id="eq-ca">
+ <div class="card"><h2 id="caT">Saisir un CA Dauphin</h2><p class="muted">Chiffre d'affaires réalisé par les adhérents sur dauphintt.com avec le code club (relevé Dauphin).</p>
+  <div class="grid">
+   <div><label for="caM">Mois</label><input id="caM" type="month"></div>
+   <div><label for="caMt">Montant (€)</label><input id="caMt" type="number" min="0" step="0.01" inputmode="decimal"></div>
+   <div><label for="caNb">Nombre de commandes (facultatif)</label><input id="caNb" type="number" min="0" step="1" inputmode="numeric"></div>
+   <div><label for="caCom">Commentaire</label><input id="caCom"></div>
+  </div><div class="row" style="margin-top:12px"><button id="caOk" type="button">Enregistrer</button><button id="caNew" type="button" class="alt">Nouveau</button></div></div>
+ <div class="card"><div class="row"><div style="max-width:260px"><label for="caS">Saison</label><select id="caS" class="eqSai"></select></div></div>
+  <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Mois</th><th class="n">Montant</th><th class="n">Commandes</th><th>Commentaire</th><th>Saisi par</th><th></th></tr></thead><tbody id="caL"></tbody></table></div></div>
+</section>
+<section id="eq-dot">
+ <div class="card"><h2 id="dtT">Ajouter une dotation</h2><p class="muted">Matériel reçu ou demandé au titre de la dotation (balles, filets, tables…), valorisé en €.</p>
+  <div class="grid">
+   <div><label for="dtD">Date</label><input id="dtD" type="date"></div>
+   <div><label for="dtC">Catégorie</label><select id="dtC"></select></div>
+   <div><label for="dtDes">Désignation</label><input id="dtDes" placeholder="ex. Balles 3* SYNTT NG ×72"></div>
+   <div><label for="dtQ">Quantité</label><input id="dtQ" type="number" min="0" step="1" value="1"></div>
+   <div><label for="dtV">Valeur (€)</label><input id="dtV" type="number" min="0" step="0.01" inputmode="decimal"></div>
+   <div><label for="dtSt">Statut</label><select id="dtSt"><option>Demandé</option><option>Commandé</option><option>Reçu</option></select></div>
+   <div><label for="dtCom">Commentaire</label><input id="dtCom"></div>
+  </div><div class="row" style="margin-top:12px"><button id="dtOk" type="button">Enregistrer</button><button id="dtNew" type="button" class="alt">Nouveau</button></div></div>
+ <div class="card"><div class="row"><div style="max-width:260px"><label for="dtS">Saison</label><select id="dtS" class="eqSai"></select></div><div style="max-width:220px"><label for="dtF">Statut</label><select id="dtF"><option value="">Tous</option><option>Demandé</option><option>Commandé</option><option>Reçu</option></select></div></div>
+  <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Date</th><th>Catégorie</th><th>Désignation</th><th class="n">Qté</th><th class="n">Valeur</th><th>Statut</th><th></th></tr></thead><tbody id="dtL"></tbody></table></div></div>
+</section>
 <section id="adm-journal">
  <div class="card"><h2>Journal d'activité</h2><div class="row"><div><label for="jrQ">Filtrer</label><input id="jrQ" placeholder="nom, action, n° de vente…"></div></div>
  <ul id="jrL" class="vl" style="margin-top:12px"></ul><nav id="jrP" class="pager"></nav><p class="muted">Les 500 dernières actions : connexions, ventes, annulations, mouvements de stock, articles, utilisateurs, paramètres.</p></div>
@@ -340,14 +379,14 @@ const label=c=>c.des+(c.decl?' – '+c.decl:'');
 const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 
 /* ---------- navigation ---------- */
-const views=['confidentialite','accueil','mesventes','acces','appareils','adm-sessions','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
+const views=['eq-bord','eq-ca','eq-dot','confidentialite','accueil','mesventes','acces','appareils','adm-sessions','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
 const KEYS=['caisse','stocks','ventes','ventes_annuler','entrees','bilan','catalogue'],LBL={caisse:'Caisse',stocks:'Stocks',ventes:'Ventes',ventes_annuler:'Annuler des ventes',entrees:'Entrées & ajustements',bilan:'Bilan',catalogue:'Catalogue'};
 let DR={},MUST=false,READY=false;
 const isAdm=()=>!!DR.administration;
 function allowed(v){if(v==='confidentialite')return true;if(['accueil','compte','mesventes','acces','appareils'].includes(v))return !MUST||v==='compte';if(MUST)return false;
- if(['caisse','stocks','ventes','entrees','bilan','catalogue'].includes(v))return !!DR[v];if(v.startsWith('adm-'))return isAdm();return false}
+ if(['caisse','stocks','ventes','entrees','bilan','catalogue'].includes(v))return !!DR[v];if(v.startsWith('adm-'))return isAdm();if(v.startsWith('eq-'))return !!DR.equipementier;return false}
 function route(){let v=views.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
- if(READY&&!allowed(v)){location.hash=MUST?'compte':'accueil';return}for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='accueil'||v==='confidentialite'?'accueil':['compte','mesventes','acces','appareils'].includes(v)?'compte':v.startsWith('adm-')?'admin':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';for(const a of $('subC').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subC').hidden=g!=='compte';for(const a of $('subA').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subA').hidden=g!=='admin';render()}
+ if(READY&&!allowed(v)){location.hash=MUST?'compte':'accueil';return}for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='accueil'||v==='confidentialite'?'accueil':['compte','mesventes','acces','appareils'].includes(v)?'compte':v.startsWith('adm-')?'admin':v.startsWith('eq-')?'equip':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';for(const a of $('subC').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subC').hidden=g!=='compte';for(const a of $('subA').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subA').hidden=g!=='admin';for(const a of $('subE').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subE').hidden=g!=='equip';render()}
 addEventListener('hashchange',route);
 
 /* ---------- rendu ---------- */
@@ -418,7 +457,7 @@ function renderCat(){
  $('catT').innerHTML=[...S.cat].sort((a,b)=>a.cat.localeCompare(b.cat)||label(a).localeCompare(label(b))).map(c=>`<tr><td><b>${esc(label(c))}</b></td><td>${esc(c.ref)}</td><td>${esc(c.cat)}</td><td class="n">${eur(c.pa)}</td><td class="n">${eur(c.pv)}</td><td class="n">${eur(c.pv-c.pa)}</td><td>${esc(c.statut)}</td><td><button class="del" style="color:var(--blue)" type="button" data-edit="${esc(c.ref)}">Modifier</button></td></tr>`).join('');
 }
 function render(){fillSelects();const v=location.hash.slice(1)||'accueil';
- if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='appareils')renderAppareils();else if(['compte','mesventes','acces'].includes(v))renderCompte();else if(v.startsWith('adm-'))renderAdmin(v);else if(v==='accueil')$('helloT').textContent=$('vNom').textContent?'Bonjour '+$('vNom').textContent+', bienvenue dans l\'Espace de Gestion LMSTT':'Bienvenue dans l\'Espace de Gestion LMSTT'}
+ if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='appareils')renderAppareils();else if(['compte','mesventes','acces'].includes(v))renderCompte();else if(v.startsWith('adm-'))renderAdmin(v);else if(v.startsWith('eq-'))renderEquip(v);else if(v==='accueil')$('helloT').textContent=$('vNom').textContent?'Bonjour '+$('vNom').textContent+', bienvenue dans l\'Espace de Gestion LMSTT':'Bienvenue dans l\'Espace de Gestion LMSTT'}
 
 /* ---------- actions ---------- */
 $('vMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;for(const x of $('vMode').children)x.classList.toggle('on',x===b);calcTot()};
@@ -444,7 +483,7 @@ function apply(j){
  S.ajust=j.ajustements.map(a=>({id:a.id,date:a.date,ref:a.ref,qte:a.quantite,motif:a.motif,com:a.commentaire,user:a.saisi_par}));
  const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[],modes:P.modes||['Espèces','Carte bancaire']};
  ROLE=j.role;VERROU=+j.verrou_min||0;$('lockNom').textContent=j.nom;DR=j.droits||DR;MUST=!!j.doit_changer_pin;READY=true;$('vNom').textContent=j.nom;
- const B=document.body.classList;for(const k of KEYS)B.toggle('no-'+k,!DR[k]);B.toggle('no-pa',!(DR.stocks||DR.entrees||DR.bilan||DR.catalogue));B.toggle('no-admin',!isAdm());B.toggle('must',MUST);
+ const B=document.body.classList;for(const k of KEYS)B.toggle('no-'+k,!DR[k]);B.toggle('no-pa',!(DR.stocks||DR.entrees||DR.bilan||DR.catalogue));B.toggle('no-admin',!isAdm());B.toggle('no-equipementier',!DR.equipementier);B.toggle('must',MUST);
  const first=['caisse','stocks','ventes','bilan','entrees','catalogue'].find(allowed);$('navBq').hidden=!first||MUST;if(first)$('navBq').setAttribute('href','#'+first);
  $('who').textContent=j.nom+' · '+(ROLE==='admin'?'admin':DR.caisse&&!DR.stocks&&!DR.ventes?'vendeur':'utilisateur');
  if(!allowed(location.hash.slice(1)||'accueil')){location.hash=MUST?'compte':'accueil'}else route();
@@ -461,7 +500,7 @@ async function renderCompte(){if(!PIN)return;const j=await rpc('api_compte',{p_p
  $('cptKpi').innerHTML=`<div class="kpi"><span>Mes ventes aujourd'hui</span><b>${eur(j.montant_jour)}</b><span>${j.nb_jour} ligne(s)</span></div><div class="kpi"><span>Mes ventes saison ${esc(j.saison)}</span><b>${eur(j.montant)}</b><span>${j.nb_ventes} ligne(s)</span></div>`;
  const d=j.derniere?esc(fdate(j.derniere.slice(0,10)))+' '+esc(j.derniere.slice(11)):'—';
  const adm=j.role==='admin',dr=j.droits||{},ad=!!dr.administration,nbq=KEYS.filter(k=>dr[k]),Y='<span class="ok" aria-label="accessible">✔</span>',N='<span class="no" aria-label="non accessible">✘</span>',it=(ok,t)=>`<li>${ok?Y:N} ${t}</li>`;
- $('tree').innerHTML=it(1,'Accueil')+`<li>${Y} Mon compte<ul>${it(1,'Mes infos')+it(1,'Mes ventes')+it(1,'Accès')}</ul></li><li>${nbq.length?Y:N} Boutique<ul>${KEYS.map(k=>it(dr[k],esc(LBL[k]))).join('')}</ul></li><li>${ad?Y:N} Administration<ul>${it(ad,'Utilisateurs')+it(ad,'Journal')+it(ad,'Paramètres')+it(ad,'Sauvegarde')}</ul></li>`;$('forcePin').hidden=!j.doit_changer_pin;
+ $('tree').innerHTML=it(1,'Accueil')+`<li>${Y} Mon compte<ul>${it(1,'Mes infos')+it(1,'Mes ventes')+it(1,'Accès')}</ul></li><li>${nbq.length?Y:N} Boutique<ul>${KEYS.map(k=>it(dr[k],esc(LBL[k]))).join('')}</ul></li><li>${dr.equipementier?Y:N} Équipementier<ul>${it(dr.equipementier,'Tableau de bord')+it(dr.equipementier,'CA Dauphin')+it(dr.equipementier,'Dotations')}</ul></li><li>${ad?Y:N} Administration<ul>${it(ad,'Utilisateurs')+it(ad,'Journal')+it(ad,'Paramètres')+it(ad,'Sauvegarde')}</ul></li>`;$('forcePin').hidden=!j.doit_changer_pin;
  MV=j.ventes||[];mvPage=1;$('mvT2').textContent='Mes ventes – saison '+j.saison;renderMesVentes();
  $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${adm?'Administrateur (accès complet)':'Utilisateur'}</td></tr><tr><td class="muted">Accès Boutique</td><td>${adm?'Tout':nbq.length?esc(nbq.map(k=>LBL[k]).join(', ')):'Aucun'}</td></tr><tr><td class="muted">Dernière connexion</td><td>${j.derniere_connexion?esc(new Date(j.derniere_connexion).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):'—'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
 $('pinOk').onclick=async()=>{const m=$('pinMsg'),o=$('pOld').value,n=$('pNew').value,n2=$('pNew2').value;m.className='warn';m.textContent='';
@@ -557,6 +596,36 @@ $('cleGen').onclick=()=>{const a=new Uint8Array(18);crypto.getRandomValues(a);$(
 $('cleOk').onclick=async()=>{const k=$('cleAuto').value.trim();const j=await rpc('api_admin_cle_sauvegarde',{p_pin:PIN,p_cle:k});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');toast('Clé enregistrée ✓ Copie-la maintenant dans GitHub');etatAuto()};
 $('saveBtn').onclick=async()=>{const j=await rpc('api_admin_export',{p_pin:PIN});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');
  const blob=new Blob([JSON.stringify(j,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde_lmstt_'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Sauvegarde téléchargée ✓');await loadAdmin();renderSave()};
+
+/* ---------- équipementier ---------- */
+let EQ=null,editCa=null,editDt=null;
+const saiOfDate=s=>saisonOf(s.slice(0,10));
+async function loadEquip(){const j=await rpc('api_equip_donnees',{p_pin:PIN});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');if(j&&j.code==='session')logout(j.erreur);return false}EQ=j;
+ const ss=[...new Set([saisonOf(today()),...EQ.saisons.map(s=>s.saison)])].sort().reverse();
+ for(const e of document.querySelectorAll('.eqSai')){const v=e.value;e.innerHTML=opts(ss,v||ss[0])}
+ $('dtC').innerHTML=opts(EQ.categories,$('dtC').value);return true}
+async function renderEquip(v){if(!DR.equipementier)return;if(!await loadEquip())return;if(v==='eq-bord')renderEqBord();else if(v==='eq-ca')renderEqCa();else renderEqDot()}
+function renderEqBord(){const s=$('eqS').value,S0=EQ.saisons.find(x=>x.saison===s)||{dotation:0,objectif_ca:0,notes:''};
+ const ca=EQ.ca.filter(c=>c.saison===s),dt=EQ.dotations.filter(d=>d.saison===s),ach=EQ.achats_boutique.filter(a=>saiOfDate(a.date)===s);
+ const tCa=ca.reduce((a,c)=>a+ +c.montant,0),tDt=dt.reduce((a,d)=>a+ +d.valeur,0),tRecu=dt.filter(d=>d.statut==='Reçu').reduce((a,d)=>a+ +d.valeur,0),tAch=ach.reduce((a,x)=>a+ +x.montant,0),dot=+S0.dotation,obj=+S0.objectif_ca;
+ $('eqKpi').innerHTML=`<div class="kpi"><span>Dotation de la saison</span><b>${eur(dot)}</b></div><div class="kpi"><span>Dotations engagées</span><b>${eur(tDt)}</b><span>dont reçues ${eur(tRecu)}</span></div><div class="kpi"><span>Reste à utiliser</span><b style="color:${dot-tDt<0?'var(--red)':'var(--ok)'}">${eur(dot-tDt)}</b><span>${dot?Math.round(tDt/dot*100):0} % utilisés</span></div><div class="kpi"><span>CA Dauphin adhérents</span><b>${eur(tCa)}</b><span>${obj?Math.round(tCa/obj*100)+' % de l\'objectif ('+eur(obj)+')':'objectif non défini'}</span></div><div class="kpi"><span>Achats boutique chez Dauphin</span><b>${eur(tAch)}</b></div>`;
+ const m=Array(12).fill(0);for(const c of ca){const mo=+c.mois.slice(5,7);m[(mo+4)%12]+= +c.montant}bars($('eqMois'),MOIS.map((k,i)=>[k,m[i]]),eur);
+ const g={};for(const d of dt)g[d.categorie]=(g[d.categorie]||0)+ +d.valeur;bars($('eqCat'),Object.entries(g).sort((a,b)=>b[1]-a[1]),eur);
+ $('eqDot').value=dot||'';$('eqObj').value=obj||'';$('eqNotes').value=S0.notes||''}
+function renderEqCa(){const s=$('caS').value;$('caL').innerHTML=EQ.ca.filter(c=>c.saison===s).map(c=>`<tr><td>${esc(MOIS[(+c.mois.slice(5,7)+4)%12])} ${c.mois.slice(0,4)}</td><td class="n">${eur(c.montant)}</td><td class="n">${c.nb_commandes??'–'}</td><td>${esc(c.commentaire)}</td><td>${esc(c.saisi_par)}</td><td><div class="acts"><button class="alt" type="button" data-eca="${c.id}">Modifier</button><button class="del" type="button" data-dca="${c.id}">Suppr.</button></div></td></tr>`).join('')||'<tr><td colspan="6" class="muted">Aucun CA saisi pour cette saison.</td></tr>'}
+function renderEqDot(){const s=$('dtS').value,f=$('dtF').value;$('dtL').innerHTML=EQ.dotations.filter(d=>d.saison===s&&(!f||d.statut===f)).map(d=>`<tr><td>${fdate(d.date)}</td><td>${esc(d.categorie)}</td><td>${esc(d.designation)}${d.commentaire?`<br><span class="muted">${esc(d.commentaire)}</span>`:''}</td><td class="n">${+d.quantite}</td><td class="n">${eur(d.valeur)}</td><td><span class="tag ${d.statut==='Reçu'?'t-o':d.statut==='Commandé'?'t-a':''}">${esc(d.statut)}</span></td><td><div class="acts"><button class="alt" type="button" data-edt="${d.id}">Modifier</button><button class="del" type="button" data-ddt="${d.id}">Suppr.</button></div></td></tr>`).join('')||'<tr><td colspan="7" class="muted">Aucune dotation pour cette saison.</td></tr>'}
+async function eqAct(fn,args,msg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');return false}toast(msg);await loadEquip();return true}
+$('eqS').oninput=renderEqBord;$('caS').oninput=renderEqCa;$('dtS').oninput=renderEqDot;$('dtF').oninput=renderEqDot;
+$('eqSOk').onclick=async()=>{if(await eqAct('api_equip_saison',{p:{saison:$('eqS').value,dotation:$('eqDot').value,objectif_ca:$('eqObj').value,notes:$('eqNotes').value}},'Saison enregistrée ✓'))renderEqBord()};
+const resetCa=()=>{editCa=null;$('caT').textContent='Saisir un CA Dauphin';$('caM').value=today().slice(0,7);for(const i of ['caMt','caNb','caCom'])$(i).value=''};$('caNew').onclick=resetCa;
+$('caOk').onclick=async()=>{if(!$('caM').value||$('caMt').value==='')return toast('Mois et montant requis');if(await eqAct('api_equip_ca',{p:{id:editCa||'',mois:$('caM').value,montant:$('caMt').value,nb_commandes:$('caNb').value,commentaire:$('caCom').value.trim()}},'CA enregistré ✓')){resetCa();renderEqCa()}};
+$('caL').onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.eca){const c=EQ.ca.find(x=>x.id===+b.dataset.eca);editCa=c.id;$('caT').textContent='Modifier le CA de '+MOIS[(+c.mois.slice(5,7)+4)%12]+' '+c.mois.slice(0,4);$('caM').value=c.mois.slice(0,7);$('caMt').value=c.montant;$('caNb').value=c.nb_commandes??'';$('caCom').value=c.commentaire;scrollTo({top:0,behavior:'smooth'})}
+ else if(b.dataset.dca){if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Confirmer ?';return}if(await eqAct('api_equip_suppr',{p_type:'ca',p_id:+b.dataset.dca},'Ligne supprimée'))renderEqCa()}};
+const resetDt=()=>{editDt=null;$('dtT').textContent='Ajouter une dotation';$('dtD').value=today();$('dtQ').value=1;for(const i of ['dtDes','dtV','dtCom'])$(i).value='';$('dtSt').value='Demandé'};$('dtNew').onclick=resetDt;
+$('dtOk').onclick=async()=>{if(!$('dtDes').value.trim())return toast('Désignation requise');if(await eqAct('api_equip_dotation',{p:{id:editDt||'',date:$('dtD').value,categorie:$('dtC').value,designation:$('dtDes').value.trim(),quantite:$('dtQ').value,valeur:$('dtV').value,statut:$('dtSt').value,commentaire:$('dtCom').value.trim()}},'Dotation enregistrée ✓')){resetDt();renderEqDot()}};
+$('dtL').onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.edt){const d=EQ.dotations.find(x=>x.id===+b.dataset.edt);editDt=d.id;$('dtT').textContent='Modifier : '+d.designation;$('dtD').value=d.date;$('dtC').value=d.categorie;$('dtDes').value=d.designation;$('dtQ').value=+d.quantite;$('dtV').value=d.valeur;$('dtSt').value=d.statut;$('dtCom').value=d.commentaire;scrollTo({top:0,behavior:'smooth'})}
+ else if(b.dataset.ddt){if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Confirmer ?';return}if(await eqAct('api_equip_suppr',{p_type:'dotation',p_id:+b.dataset.ddt},'Ligne supprimée'))renderEqDot()}};
+resetCa();resetDt();
 
 /* ---------- appareils & sessions ---------- */
 function appareil(){const u=navigator.userAgent;const os=/iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac OS X|Macintosh/.test(u)?'Mac':/Linux/.test(u)?'Linux':'Appareil';
