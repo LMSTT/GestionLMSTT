@@ -145,7 +145,7 @@ pre,.scroll{overflow-x:auto}
 </main>
 <div id="toast"></div>
 <div id="login"><form id="loginF" class="card"><h2>Boutique LMSTT</h2><p class="muted">Connecte-toi pour accéder à la caisse.</p>
-<label for="ident">Identifiant</label><input id="ident" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+<label for="ident">Identifiant</label><select id="ident" required><option value="">Chargement…</option></select>
 <label for="pin" style="margin-top:12px">Code PIN</label><input id="pin" type="password" autocomplete="current-password" autocapitalize="off" required>
 <label style="display:flex;gap:8px;align-items:center;margin:12px 0;font-weight:400"><input type="checkbox" id="keep" style="width:auto;min-height:0"> Rester connecté sur cet appareil</label>
 <button id="loginB" type="submit" style="width:100%">Entrer</button><p id="loginMsg" class="warn"></p></form></div>
@@ -267,12 +267,16 @@ function apply(j){
  st.textContent='À jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});render()}
 async function load(){const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok){st.textContent=(j&&j.erreur)||'Erreur';if(j&&/PIN/.test(j.erreur))logout();return false}apply(j);return true}
 async function act(fn,args,okMsg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');return null}toast(okMsg);await load();return j}
-function logout(){PIN='';store.del('lmstt_pin');$('login').style.display='grid';$('pin').value='';$('ident').focus()}
+function logout(){PIN='';store.del('lmstt_pin');$('login').style.display='grid';$('pin').value='';loadIdents()}
 $('logout').onclick=logout;
+async function loadIdents(){const j=await rpc('api_identifiants',{});const e=$('ident');
+ if(!Array.isArray(j)){e.innerHTML='<option value="">Liste indisponible</option>';$('loginMsg').textContent=(j&&j.erreur)||'Liste des identifiants indisponible.';setTimeout(loadIdents,15000);return}
+ const last=store.get('lmstt_ident');e.innerHTML='<option value="">— choisis ton identifiant —</option>'+j.map(u=>`<option value="${esc(u.identifiant)}"${u.identifiant===last?' selected':''}>${esc(u.nom)} (${esc(u.identifiant)})</option>`).join('');
+ if($('loginMsg').textContent.startsWith('Liste'))$('loginMsg').textContent=''}
 $('loginF').onsubmit=async e=>{e.preventDefault();const b=$('loginB');b.disabled=true;$('loginMsg').textContent='Connexion…';
  const cred=$('ident').value.trim()+'\n'+$('pin').value.trim();const j=await rpc('api_connexion',{p_pin:cred});b.disabled=false;
  if(!j||!j.ok){$('loginMsg').textContent=(j&&j.erreur)||'Erreur';return}
- PIN=cred;store.del('lmstt_pin');store.set('lmstt_pin',PIN,$('keep').checked);$('login').style.display='none';$('loginMsg').textContent='';st.textContent='Chargement…';load()};
+ store.set('lmstt_ident',$('ident').value,true);PIN=cred;store.del('lmstt_pin');store.set('lmstt_pin',PIN,$('keep').checked);$('login').style.display='none';$('loginMsg').textContent='';st.textContent='Chargement…';load()};
 
 /* ---------- actions ---------- */
 $('vOk').onclick=async()=>{
@@ -309,7 +313,7 @@ $('bS').oninput=renderBilan;
 for(const id of ['vDate','aDate','jDate'])$(id).value=today();
 route();
 PIN=store.get('lmstt_pin');if(PIN&&!PIN.includes('\n'))PIN='';
-if(PIN){$('login').style.display='none';st.textContent='Chargement…';load()}
+if(PIN){$('login').style.display='none';st.textContent='Chargement…';load()}else loadIdents();
 setInterval(()=>{if(PIN&&!document.hidden)load()},60000);
 }
 </script>
