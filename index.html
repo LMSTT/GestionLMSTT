@@ -48,6 +48,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 #login{position:fixed;inset:0;background:var(--blue);display:grid;place-items:center;padding:16px;z-index:20}#login form{width:min(380px,100%)}
 #venH th[data-k]{cursor:pointer;user-select:none;white-space:nowrap}#venH th[data-k]:hover{color:var(--blue)}#venH th[data-k]::after{content:attr(data-ar);color:var(--blue)}
 .mob{display:none}@media(max-width:600px){.mob{display:block}}
+.dh{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -63,7 +64,7 @@ pre,.scroll{overflow-x:auto}
 <section id="caisse">
  <div class="card"><h2>Nouvelle vente</h2>
   <div class="grid">
-   <div><label for="vDate">Date</label><input type="date" id="vDate"></div>
+   <div class="dh"><div><label for="vDate">Date</label><input type="date" id="vDate"></div><div><label for="vHeure">Heure</label><input type="time" id="vHeure"></div></div>
    <div><label for="vAch">Acheteur (Nom Prénom)</label><input id="vAch" list="achList" autocomplete="off" placeholder="ex. Dupont Léa"><datalist id="achList"></datalist></div>
    <div><label>Vendeur</label><div id="vNom" style="font-weight:700;padding:10px 0"></div><select id="vUser" hidden></select></div>
    <div class="full"><label>Règlement</label><div class="seg" id="vMode"><button type="button" data-m="Espèces">Espèces</button><button type="button" data-m="Carte bancaire" class="on">Carte bancaire</button></div></div>
@@ -157,6 +158,7 @@ pre,.scroll{overflow-x:auto}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const eur=n=>(Number(n)||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
+const nowHM=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const fdate=s=>s?s.split('-').reverse().join('/'):'';
 const saisonOf=s=>{const y=+s.slice(0,4),m=+s.slice(5,7);return m>=8?y+'-'+(y+1):(y-1)+'-'+y};
@@ -215,9 +217,9 @@ function renderStocks(){
 let vSort={k:'date',d:-1};
 function renderVentes(){
  const s=$('venS').value,q=$('venQ').value.toLowerCase();
- const L=S.ventes.filter(v=>saisonOf(v.date)===s&&(!q||(v.ach+v.lib+v.user).toLowerCase().includes(q))).sort((a,b)=>{const k=vSort.k,x=a[k],y=b[k];const c=typeof x==='number'?x-y:String(x??'').localeCompare(String(y??''),'fr',{sensitivity:'base',numeric:true});return (c||a.num.localeCompare(b.num))*vSort.d});
+ const L=S.ventes.filter(v=>saisonOf(v.date)===s&&(!q||(v.ach+v.lib+v.user).toLowerCase().includes(q))).sort((a,b)=>{const k=vSort.k,x=k==='date'?a.date+(a.heure||''):a[k],y=k==='date'?b.date+(b.heure||''):b[k];const c=typeof x==='number'?x-y:String(x??'').localeCompare(String(y??''),'fr',{sensitivity:'base',numeric:true});return (c||a.num.localeCompare(b.num))*vSort.d});
  for(const th of $('venH').querySelectorAll('th[data-k]')){const on=th.dataset.k===vSort.k;th.setAttribute('aria-sort',on?(vSort.d>0?'ascending':'descending'):'none');th.dataset.ar=on?(vSort.d>0?' ▲':' ▼'):''}
- $('venT').innerHTML=L.map(v=>`<tr><td>${fdate(v.date)}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${esc(v.mode)}</td><td>${esc(v.user)}</td><td><button class="del adm" data-delv="${esc(v.num)}" type="button">Annuler</button></td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
+ $('venT').innerHTML=L.map(v=>`<tr><td style="white-space:nowrap">${fdate(v.date)}${v.heure?' · '+esc(v.heure):''}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${esc(v.mode)}</td><td>${esc(v.user)}</td><td><button class="del adm" data-delv="${esc(v.num)}" type="button">Annuler</button></td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
 }
 function renderMv(){
  const L=[...S.appros.map(a=>({...a,t:'Entrée',k:'entree',d:`${a.four} · ${a.cde} · ${eur(a.pa)} /u`})),...S.ajust.map(j=>({...j,t:'Ajustement',k:'ajustement',d:j.motif+(j.com?' · '+j.com:'')}))].sort((a,b)=>b.date.localeCompare(a.date));
@@ -262,7 +264,7 @@ async function rpc(fn,args){const ctl=new AbortController(),t=setTimeout(()=>ctl
 const st=$('status');
 function apply(j){
  S.cat=j.catalogue.map(c=>({ref:c.ref,refP:c.ref_principale,decl:c.declinaison,des:c.designation,cat:c.categorie,four:c.fournisseur,pa:+c.prix_achat,pv:+c.prix_vente,stock:c.stock,seuil:c.seuil,init:c.stock_initial,statut:c.statut}));
- S.ventes=j.ventes.map(v=>({num:v.num,date:v.date,ach:v.acheteur,lib:v.libelle,ref:v.ref,qte:v.quantite,mt:+v.montant,pa:+v.pa_unitaire,mode:v.mode,user:v.vendeur,com:v.commentaire}));
+ S.ventes=j.ventes.map(v=>({num:v.num,date:v.date,heure:(v.heure||'').slice(0,5),ach:v.acheteur,lib:v.libelle,ref:v.ref,qte:v.quantite,mt:+v.montant,pa:+v.pa_unitaire,mode:v.mode,user:v.vendeur,com:v.commentaire}));
  S.appros=j.entrees.map(a=>({id:a.id,date:a.date,cde:a.num_commande,four:a.fournisseur,ref:a.ref,qte:a.quantite,pa:+a.prix_achat,com:a.commentaire,user:a.saisi_par}));
  S.ajust=j.ajustements.map(a=>({id:a.id,date:a.date,ref:a.ref,qte:a.quantite,motif:a.motif,com:a.commentaire,user:a.saisi_par}));
  const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[],modes:P.modes||['Espèces','Carte bancaire']};
@@ -288,8 +290,8 @@ $('vOk').onclick=async()=>{
  if(!ach)return msg.textContent='Indique l\'acheteur.';if(!L.length)return msg.textContent='Choisis au moins un article.';
  for(const l of L){if(!(+l.q>0))return msg.textContent='Quantité invalide.';const need=L.filter(x=>x.ref===l.ref).reduce((s,x)=>s+ +x.q,0);if(need>stockOf(l.ref))return msg.textContent='Stock insuffisant pour '+label(byRef(l.ref))+'.'}
  const b=$('vOk');b.disabled=true;
- const j=await act('api_vente',{p:{date:$('vDate').value||today(),acheteur:ach,mode,commentaire:$('vCom').value.trim(),lignes:L.map(l=>({ref:l.ref,qte:+l.q,prix:l.p===''?null:+l.p}))}},'Vente enregistrée ✓');
- if(j){cart=[{ref:'',q:1,p:''}];$('vAch').value='';$('vCom').value='';$('vRecu').value='';renderCart()}else msg.textContent='Vente non enregistrée.';
+ const j=await act('api_vente',{p:{date:$('vDate').value||today(),heure:$('vHeure').value||nowHM(),acheteur:ach,mode,commentaire:$('vCom').value.trim(),lignes:L.map(l=>({ref:l.ref,qte:+l.q,prix:l.p===''?null:+l.p}))}},'Vente enregistrée ✓');
+ if(j){$('vDate').value=today();$('vHeure').value=nowHM();hTouched=0;cart=[{ref:'',q:1,p:''}];$('vAch').value='';$('vCom').value='';$('vRecu').value='';renderCart()}else msg.textContent='Vente non enregistrée.';
  b.disabled=false};
 $('venT').onclick=async e=>{const n=e.target.dataset.delv;if(!n)return;if(e.target.dataset.c!=='1'){e.target.dataset.c='1';e.target.textContent='Confirmer ?';return}
  await act('api_annuler_vente',{p_num:n},'Vente '+n+' annulée')};
@@ -317,6 +319,7 @@ $('bS').oninput=renderBilan;
 
 /* ---------- démarrage ---------- */
 for(const id of ['vDate','aDate','jDate'])$(id).value=today();
+let hTouched=0;$('vHeure').value=nowHM();$('vHeure').oninput=()=>hTouched=1;setInterval(()=>{if(!hTouched){$('vHeure').value=nowHM();$('vDate').value=today()}},30000);
 route();
 PIN=store.get('lmstt_pin');if(PIN&&!PIN.includes('\n'))PIN='';
 if(PIN){$('login').style.display='none';st.textContent='Chargement…';load()}else loadIdents();
