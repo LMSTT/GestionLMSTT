@@ -54,6 +54,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 @media(max-width:600px){.top{grid-template-columns:auto 1fr auto}.ttl p{display:none}}
 .pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}.pager button{min-width:44px;padding:8px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.pager button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.pager .muted{margin-left:auto}
 .sm{display:none}@media(max-width:600px){.lg{display:none}.sm{display:inline}}
+.conf{display:flex;gap:12px;align-items:flex-start;margin:16px 0 4px;padding:14px;border:2px solid var(--plum);border-radius:12px;background:var(--card);font-weight:400;font-size:15px;color:var(--ink);cursor:pointer}.conf input{width:24px;height:24px;min-height:0;flex:none;margin-top:2px;accent-color:var(--plum)}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -83,6 +84,7 @@ pre,.scroll{overflow-x:auto}
    <div><label>Monnaie à rendre</label><div id="vRendu" style="font:700 26px Oswald,sans-serif;padding-top:4px">—</div></div>
   </div>
   <div style="margin-top:12px"><label for="vCom">Commentaire (facultatif)</label><input id="vCom"></div>
+  <label class="conf" for="vConf"><input type="checkbox" id="vConf"><span>Je confirme avoir déposé espèces et/ou chèques dans la bannette de Jérôme et/ou avoir encaissé par CB sur le terminal de paiement au club. <b class="warn">*</b></span></label>
   <p id="vMsg" class="warn"></p>
   <button id="vOk" type="button" style="width:100%;font-size:17px">Valider la vente</button>
  </div>
@@ -318,11 +320,11 @@ $('loginF').onsubmit=async e=>{e.preventDefault();const b=$('loginB');b.disabled
 /* ---------- actions ---------- */
 $('vOk').onclick=async()=>{
  const msg=$('vMsg');msg.textContent='';const ach=$('vAch').value.trim(),L=cart.filter(l=>l.ref);
- if(!ach)return msg.textContent='Indique le client.';if(!L.length)return msg.textContent='Choisis au moins un article.';
+ if(!ach)return msg.textContent='Indique le client.';if(!L.length)return msg.textContent='Choisis au moins un article.';if(!$('vConf').checked)return msg.textContent='Coche la confirmation de dépôt / encaissement avant de valider.';
  for(const l of L){if(!(+l.q>0))return msg.textContent='Quantité invalide.';const need=L.filter(x=>x.ref===l.ref).reduce((s,x)=>s+ +x.q,0);if(need>stockOf(l.ref))return msg.textContent='Stock insuffisant pour '+label(byRef(l.ref))+'.'}
  const b=$('vOk');b.disabled=true;
- const j=await act('api_vente',{p:{date:$('vDate').value||today(),heure:$('vHeure').value||nowHM(),acheteur:ach,mode,commentaire:$('vCom').value.trim(),lignes:L.map(l=>({ref:l.ref,qte:+l.q,prix:l.p===''?null:+l.p}))}},'Vente enregistrée ✓');
- if(j){$('vDate').value=today();$('vHeure').value=nowHM();hTouched=0;cart=[{ref:'',q:1,p:''}];$('vAch').value='';$('vCom').value='';$('vRecu').value='';renderCart()}else msg.textContent='Vente non enregistrée.';
+ const j=await act('api_vente',{p:{date:$('vDate').value||today(),heure:$('vHeure').value||nowHM(),confirme:$('vConf').checked,acheteur:ach,mode,commentaire:$('vCom').value.trim(),lignes:L.map(l=>({ref:l.ref,qte:+l.q,prix:l.p===''?null:+l.p}))}},'Vente enregistrée ✓');
+ if(j){$('vConf').checked=false;$('vDate').value=today();$('vHeure').value=nowHM();hTouched=0;cart=[{ref:'',q:1,p:''}];$('vAch').value='';$('vCom').value='';$('vRecu').value='';renderCart()}else msg.textContent='Vente non enregistrée.';
  b.disabled=false};
 $('venT').onclick=async e=>{const n=e.target.dataset.delv;if(!n)return;if(e.target.dataset.c!=='1'){e.target.dataset.c='1';e.target.textContent='Confirmer ?';return}
  await act('api_annuler_vente',{p_num:n},'Vente '+n+' annulée')};
