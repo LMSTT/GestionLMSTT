@@ -62,7 +62,7 @@ pre,.scroll{overflow-x:auto}
 @media(prefers-reduced-motion:no-preference){section.on{animation:f .2s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
 <header><div class="top"><div class="logo"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table"></div><div class="ttl"><h1>Boutique LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
-<nav id="nav"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav></header>
+<nav id="nav"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a><a href="#compte">Mon compte</a></nav></header>
 <main>
 <p id="status"></p>
 
@@ -134,6 +134,19 @@ pre,.scroll{overflow-x:auto}
  </div>
 </section>
 
+<section id="compte">
+ <div class="kpis" id="cptKpi"></div>
+ <div class="card"><h2>Mes informations</h2><table><tbody id="cptInfo"></tbody></table></div>
+ <div class="card"><h2>Changer mon code PIN</h2>
+  <form id="pinF" class="grid" autocomplete="off">
+   <div><label for="pOld">Code actuel</label><input id="pOld" type="password" required></div>
+   <div><label for="pNew">Nouveau code (4 caractères min.)</label><input id="pNew" type="password" minlength="4" required></div>
+   <div><label for="pNew2">Confirme le nouveau code</label><input id="pNew2" type="password" minlength="4" required></div>
+  </form>
+  <p class="muted">Le code tient compte des majuscules. Ne le communique à personne.</p>
+  <p id="pinMsg" class="warn"></p>
+  <button id="pinOk" type="button">Changer mon code</button></div>
+</section>
 <section id="catalogue">
  <div class="card"><h2 id="cTitle">Ajouter un article</h2>
   <div class="grid">
@@ -179,7 +192,7 @@ const label=c=>c.des+(c.decl?' – '+c.decl:'');
 const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 
 /* ---------- navigation ---------- */
-const views=['caisse','stocks','ventes','entrees','bilan','catalogue'];
+const views=['caisse','stocks','ventes','entrees','bilan','catalogue','compte'];
 function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'caisse';for(const x of views){$(x).classList.toggle('on',x===v)}for(const a of $('nav').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);render()}
 addEventListener('hashchange',route);
 
@@ -251,7 +264,7 @@ function renderCat(){
  $('catT').innerHTML=[...S.cat].sort((a,b)=>a.cat.localeCompare(b.cat)||label(a).localeCompare(label(b))).map(c=>`<tr><td><b>${esc(label(c))}</b></td><td>${esc(c.ref)}</td><td>${esc(c.cat)}</td><td class="n">${eur(c.pa)}</td><td class="n">${eur(c.pv)}</td><td class="n">${eur(c.pv-c.pa)}</td><td>${esc(c.statut)}</td><td><button class="del" style="color:var(--blue)" type="button" data-edit="${esc(c.ref)}">Modifier</button></td></tr>`).join('');
 }
 function render(){fillSelects();const v=location.hash.slice(1)||'caisse';
- if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat()}
+ if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='compte')renderCompte()}
 
 /* ---------- actions ---------- */
 $('vMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;for(const x of $('vMode').children)x.classList.toggle('on',x===b);calcTot()};
@@ -283,6 +296,16 @@ async function load(){const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok)
 async function act(fn,args,okMsg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');return null}toast(okMsg);await load();return j}
 function logout(){PIN='';store.del('lmstt_pin');$('login').style.display='grid';$('pin').value='';loadIdents()}
 $('logout').onclick=logout;
+async function renderCompte(){if(!PIN)return;const j=await rpc('api_compte',{p_pin:PIN});if(!j||!j.ok)return;
+ $('cptKpi').innerHTML=`<div class="kpi"><span>Mes ventes aujourd'hui</span><b>${eur(j.montant_jour)}</b><span>${j.nb_jour} ligne(s)</span></div><div class="kpi"><span>Mes ventes saison ${esc(j.saison)}</span><b>${eur(j.montant)}</b><span>${j.nb_ventes} ligne(s)</span></div>`;
+ const d=j.derniere?esc(fdate(j.derniere.slice(0,10)))+' '+esc(j.derniere.slice(11)):'—';
+ $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${j.role==='admin'?'Administrateur (accès complet)':'Vendeur (caisse)'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
+$('pinOk').onclick=async()=>{const m=$('pinMsg'),o=$('pOld').value,n=$('pNew').value,n2=$('pNew2').value;m.className='warn';m.textContent='';
+ if(!o||!n)return m.textContent='Remplis les trois cases.';if(n.length<4)return m.textContent='Le nouveau code doit faire au moins 4 caractères.';if(n!==n2)return m.textContent='Les deux nouveaux codes ne sont pas identiques.';
+ const ident=PIN.split('\n')[0],b=$('pinOk');b.disabled=true;const j=await rpc('api_changer_pin',{p_pin:ident+'\n'+o,p_nouveau:n});b.disabled=false;
+ if(!j||!j.ok){m.textContent=(j&&j.erreur)||'Erreur';return}
+ const keep=(()=>{try{return !!localStorage.getItem('lmstt_pin')}catch(e){return false}})();PIN=ident+'\n'+n;store.del('lmstt_pin');store.set('lmstt_pin',PIN,keep);
+ for(const i of ['pOld','pNew','pNew2'])$(i).value='';m.className='okc';m.textContent='Code modifié ✓ Utilise le nouveau code à ta prochaine connexion.'};
 async function loadIdents(){const j=await rpc('api_identifiants',{});const e=$('ident');
  if(!Array.isArray(j)){e.innerHTML='<option value="">Liste indisponible</option>';$('loginMsg').textContent=(j&&j.erreur)||'Liste des identifiants indisponible.';setTimeout(loadIdents,15000);return}
  const last=store.get('lmstt_ident');e.innerHTML='<option value="">— choisis ton identifiant —</option>'+j.map(u=>`<option value="${esc(u.identifiant)}"${u.identifiant===last?' selected':''}>${esc(u.nom)} (${esc(u.identifiant)})</option>`).join('');
