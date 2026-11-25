@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Boutique LMSTT</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0475b7">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Boutique LMSTT">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -15,7 +23,7 @@
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Lato,Helvetica,Arial,sans-serif;overflow-x:clip}
 h1,h2,h3{font-family:Oswald,Helvetica,Arial,sans-serif;font-weight:700;line-height:1.1;margin:0}
-header{background:var(--blue);color:#fff;padding:18px max(4vw,16px) 0}
+header{background:var(--blue);color:#fff;padding:calc(18px + env(safe-area-inset-top)) max(4vw,16px) 0}
 header h1{font-size:clamp(26px,5vw,38px)}header p{margin:2px 0 12px;opacity:.85;font-size:14px}
 nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 nav a{flex:none;color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px 10px 0 0;font-weight:700;font-size:15px;opacity:.85}
@@ -358,6 +366,8 @@ route();
 PIN=store.get('lmstt_pin');if(PIN&&!PIN.includes('\n'))PIN='';
 if(PIN){$('login').style.display='none';st.textContent='Chargement…';load()}else loadIdents();
 setInterval(()=>{if(PIN&&!document.hidden)load()},60000);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+addEventListener('online',()=>{if(PIN)load()});addEventListener('offline',()=>{st.textContent='Hors connexion : les ventes ne peuvent pas être enregistrées.'});
 }
 </script>
 </body></html>
