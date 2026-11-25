@@ -62,7 +62,7 @@ pre,.scroll{overflow-x:auto}
 @media(prefers-reduced-motion:no-preference){section.on{animation:f .2s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
 <header><div class="top"><div class="logo"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table"></div><div class="ttl"><h1>Boutique LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
-<nav id="nav"><a href="#caisse">Caisse</a><a href="#stocks">Stocks</a><a href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav></header>
+<nav id="nav"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav></header>
 <main>
 <p id="status"></p>
 
@@ -277,7 +277,7 @@ function apply(j){
  S.ajust=j.ajustements.map(a=>({id:a.id,date:a.date,ref:a.ref,qte:a.quantite,motif:a.motif,com:a.commentaire,user:a.saisi_par}));
  const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[],modes:P.modes||['Espèces','Carte bancaire']};
  ROLE=j.role;$('vNom').textContent=j.nom;document.body.classList.toggle('vend',ROLE!=='admin');$('who').textContent=j.nom+(ROLE==='admin'?' · admin':' · vendeur');
- if(ROLE!=='admin'&&['bilan','entrees','catalogue'].includes(location.hash.slice(1)))location.hash='caisse';
+ if(ROLE!=='admin'&&['stocks','ventes','bilan','entrees','catalogue'].includes(location.hash.slice(1)))location.hash='caisse';
  st.textContent='À jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});render()}
 async function load(){const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok){st.textContent=(j&&j.erreur)||'Erreur';if(j&&/PIN/.test(j.erreur))logout();return false}apply(j);return true}
 async function act(fn,args,okMsg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');return null}toast(okMsg);await load();return j}
