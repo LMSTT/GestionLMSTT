@@ -49,6 +49,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 #venH th[data-k]{cursor:pointer;user-select:none;white-space:nowrap}#venH th[data-k]:hover{color:var(--blue)}#venH th[data-k]::after{content:attr(data-ar);color:var(--blue)}
 .mob{display:none}@media(max-width:600px){.mob{display:block}}
 .dh{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px}
+.usr{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -56,7 +57,7 @@ pre,.scroll{overflow-x:auto}
 .lines .ln{grid-template-columns:minmax(0,1fr) 70px 90px 36px}}
 @media(prefers-reduced-motion:no-preference){section.on{animation:f .2s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
-<header><div class="top"><h1>Boutique LMSTT</h1><div><span id="who"></span> <button id="logout" class="alt out" type="button">Quitter</button></div></div><p>Caisse, stocks et bilan de saison · Plaisir Partage Performance</p>
+<header><div class="top"><h1>Boutique LMSTT</h1><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div><p>Caisse, stocks et bilan de saison · Plaisir Partage Performance</p>
 <nav id="nav"><a href="#caisse">Caisse</a><a href="#stocks">Stocks</a><a href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav></header>
 <main>
 <p id="status"></p>
