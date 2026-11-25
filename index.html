@@ -64,6 +64,8 @@ td.n,th.n{text-align:right;white-space:nowrap}
 .pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}.pager button{min-width:44px;padding:8px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.pager button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.pager .muted{margin-left:auto}
 .sm{display:none}@media(max-width:600px){.lg{display:none}.sm{display:inline}}
 .conf{display:flex;gap:12px;align-items:flex-start;margin:16px 0 4px;padding:14px;border:2px solid var(--plum);border-radius:12px;background:var(--card);font-weight:400;font-size:15px;color:var(--ink);cursor:pointer}.conf input{width:24px;height:24px;min-height:0;flex:none;margin-top:2px;accent-color:var(--plum)}
+.lst{margin:0;padding-left:1.2em}.lst li{margin:6px 0}.sect{font-size:24px;color:var(--plum);margin:10px 0 14px}.hello{border-left:6px solid var(--blue)}.hello h2{font-size:clamp(22px,4vw,30px)}
+a.secteur{display:block;color:inherit;text-decoration:none;border:2px solid var(--blue);transition:transform .15s}a.secteur:hover{transform:translateY(-2px)}a.secteur h3{color:var(--blue);font-size:22px}.go{display:inline-block;margin-top:8px;font-weight:700;color:var(--blue)}.soon{border-style:dashed}a.logo{display:block}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -71,8 +73,8 @@ pre,.scroll{overflow-x:auto}
 .lines .ln{grid-template-columns:minmax(0,1fr) 70px 90px 36px}}
 @media(prefers-reduced-motion:no-preference){section.on{animation:f .2s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
-<header><div class="top"><div class="logo"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table"></div><div class="ttl"><h1>Espace de Gestion LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
-<nav id="nav"><a href="#caisse" data-g="boutique">Boutique</a><a href="#compte" data-g="compte">Mon compte</a></nav></header>
+<header><div class="top"><a class="logo" href="https://lemanssarthetennisdetable.net/" target="_blank" rel="noopener" title="Site du Le Mans Sarthe Tennis de Table (nouvel onglet)"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table – ouvrir le site du club"></a><div class="ttl"><h1>Espace de Gestion LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
+<nav id="nav"><a href="#accueil" data-g="accueil">Accueil</a><a href="#compte" data-g="compte">Mon compte</a><a href="#caisse" data-g="boutique">Boutique</a></nav></header>
 <nav id="sub" aria-label="Boutique"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav>
 <main>
 <p id="status"></p>
@@ -146,9 +148,40 @@ pre,.scroll{overflow-x:auto}
  </div>
 </section>
 
+<section id="accueil">
+ <div class="card hello"><h2 id="helloT">Bienvenue dans l'Espace de Gestion LMSTT</h2>
+  <p>Cet outil en ligne regroupe la gestion des activités du club. Il fonctionne sur ordinateur, tablette et téléphone, et toutes les saisies sont enregistrées en direct dans une base commune.</p></div>
+ <div class="grid">
+  <div class="card"><h3>Se repérer</h3><ul class="lst">
+   <li><b>Accueil</b> : cette page de présentation.</li>
+   <li><b>Mon compte</b> : tes informations, tes ventes et tes accès. Tu peux y changer ton code PIN (4 chiffres).</li>
+   <li><b>Les secteurs</b> (Boutique…) : chacun a ses propres sous-onglets, juste sous le bandeau bleu.</li>
+   <li>Le <b>logo</b> en haut à gauche ouvre le site du club dans un nouvel onglet.</li></ul></div>
+  <div class="card"><h3>Bonnes pratiques</h3><ul class="lst">
+   <li>Ton code PIN est personnel : ne le communique à personne.</li>
+   <li>Sur un appareil partagé (PC du club), clique sur <b>Déconnexion</b> en partant.</li>
+   <li>Une connexion internet est nécessaire pour enregistrer une saisie.</li>
+   <li>Sur téléphone, installe l'appli : Safari › Partager › « Sur l'écran d'accueil » (iPhone) ou Chrome › ⋮ › « Installer l'application » (Android).</li></ul></div>
+ </div>
+ <h2 class="sect">Les secteurs</h2>
+ <div class="grid">
+  <a class="card secteur" href="#caisse"><h3>🛒 Boutique</h3>
+   <p>Vente des articles du club dans la vitrine du hall : raquettes, revêtements, balles, accessoires, textile et produits club.</p>
+   <ul class="lst">
+    <li><b>Caisse</b> : enregistrer une vente (client, articles, règlement), avec confirmation du dépôt des espèces / chèques ou de l'encaissement CB.</li>
+    <li class="adm"><b>Stocks</b> : quantités en vitrine et alertes de rupture.</li>
+    <li class="adm"><b>Ventes</b> : historique par saison, tri, recherche, annulation et export Excel.</li>
+    <li class="adm"><b>Entrées &amp; ajustements</b> : réceptions de commande et corrections d'inventaire.</li>
+    <li class="adm"><b>Bilan</b> : chiffre d'affaires, marge et meilleures ventes de la saison (1er août – 31 juillet).</li>
+    <li class="adm"><b>Catalogue</b> : articles, prix et seuils d'alerte.</li></ul>
+   <span class="go">Ouvrir la boutique ›</span></a>
+  <div class="card soon"><h3>Prochains secteurs</h3><p class="muted">D'autres secteurs de gestion du club pourront être ajoutés ici au fil du temps.</p></div>
+ </div>
+</section>
 <section id="compte">
  <div class="kpis" id="cptKpi"></div>
  <div class="card"><h2>Mes informations</h2><table><tbody id="cptInfo"></tbody></table></div>
+ <div class="card"><h2>Mes accès par secteur</h2><div class="scroll"><table class="stack"><thead><tr><th>Secteur</th><th>Profil</th><th>Onglets accessibles</th></tr></thead><tbody id="cptAcces"></tbody></table></div></div>
  <div class="card"><h2>Changer mon code PIN</h2>
   <form id="pinF" class="grid" autocomplete="off">
    <div><label for="pOld">Code actuel</label><input id="pOld" type="password" required></div>
@@ -204,8 +237,8 @@ const label=c=>c.des+(c.decl?' – '+c.decl:'');
 const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 
 /* ---------- navigation ---------- */
-const views=['caisse','stocks','ventes','entrees','bilan','catalogue','compte'];
-function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'caisse';for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='compte'?'compte':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';render()}
+const views=['accueil','caisse','stocks','ventes','entrees','bilan','catalogue','compte'];
+function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='compte'||v==='accueil'?v:'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';render()}
 addEventListener('hashchange',route);
 
 /* ---------- rendu ---------- */
@@ -276,7 +309,7 @@ function renderCat(){
  $('catT').innerHTML=[...S.cat].sort((a,b)=>a.cat.localeCompare(b.cat)||label(a).localeCompare(label(b))).map(c=>`<tr><td><b>${esc(label(c))}</b></td><td>${esc(c.ref)}</td><td>${esc(c.cat)}</td><td class="n">${eur(c.pa)}</td><td class="n">${eur(c.pv)}</td><td class="n">${eur(c.pv-c.pa)}</td><td>${esc(c.statut)}</td><td><button class="del" style="color:var(--blue)" type="button" data-edit="${esc(c.ref)}">Modifier</button></td></tr>`).join('');
 }
 function render(){fillSelects();const v=location.hash.slice(1)||'caisse';
- if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='compte')renderCompte()}
+ if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='compte')renderCompte();else if(v==='accueil')$('helloT').textContent=$('vNom').textContent?'Bonjour '+$('vNom').textContent+', bienvenue dans l\'Espace de Gestion LMSTT':'Bienvenue dans l\'Espace de Gestion LMSTT'}
 
 /* ---------- actions ---------- */
 $('vMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;for(const x of $('vMode').children)x.classList.toggle('on',x===b);calcTot()};
@@ -302,7 +335,7 @@ function apply(j){
  S.ajust=j.ajustements.map(a=>({id:a.id,date:a.date,ref:a.ref,qte:a.quantite,motif:a.motif,com:a.commentaire,user:a.saisi_par}));
  const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[],modes:P.modes||['Espèces','Carte bancaire']};
  ROLE=j.role;$('vNom').textContent=j.nom;document.body.classList.toggle('vend',ROLE!=='admin');$('who').textContent=j.nom+(ROLE==='admin'?' · admin':' · vendeur');
- if(ROLE!=='admin'&&['stocks','ventes','bilan','entrees','catalogue'].includes(location.hash.slice(1)))location.hash='caisse';
+ if(ROLE!=='admin'&&['stocks','ventes','bilan','entrees','catalogue'].includes(location.hash.slice(1)))location.hash='accueil';
  st.textContent='À jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});render()}
 async function load(){const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok){st.textContent=(j&&j.erreur)||'Erreur';if(j&&/PIN/.test(j.erreur))logout();return false}apply(j);return true}
 async function act(fn,args,okMsg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');return null}toast(okMsg);await load();return j}
@@ -311,6 +344,7 @@ $('logout').onclick=logout;
 async function renderCompte(){if(!PIN)return;const j=await rpc('api_compte',{p_pin:PIN});if(!j||!j.ok)return;
  $('cptKpi').innerHTML=`<div class="kpi"><span>Mes ventes aujourd'hui</span><b>${eur(j.montant_jour)}</b><span>${j.nb_jour} ligne(s)</span></div><div class="kpi"><span>Mes ventes saison ${esc(j.saison)}</span><b>${eur(j.montant)}</b><span>${j.nb_ventes} ligne(s)</span></div>`;
  const d=j.derniere?esc(fdate(j.derniere.slice(0,10)))+' '+esc(j.derniere.slice(11)):'—';
+ const adm=j.role==='admin';$('cptAcces').innerHTML=`<tr><td><b>Boutique</b></td><td>${adm?'Administrateur':'Vendeur'}</td><td>${adm?'Caisse, Stocks, Ventes, Entrées &amp; ajustements, Bilan, Catalogue':'Caisse'}</td></tr>`;
  $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${j.role==='admin'?'Administrateur (accès complet)':'Vendeur (caisse)'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
 $('pinOk').onclick=async()=>{const m=$('pinMsg'),o=$('pOld').value,n=$('pNew').value,n2=$('pNew2').value;m.className='warn';m.textContent='';
  if(!o||!n)return m.textContent='Remplis les trois cases.';if(!/^[0-9]{4}$/.test(n))return m.textContent='Le nouveau code doit faire exactement 4 chiffres.';if(n!==n2)return m.textContent='Les deux nouveaux codes ne sont pas identiques.';
@@ -325,7 +359,7 @@ async function loadIdents(){const j=await rpc('api_identifiants',{});const e=$('
 $('loginF').onsubmit=async e=>{e.preventDefault();const b=$('loginB');b.disabled=true;$('loginMsg').textContent='Connexion…';
  const cred=$('ident').value.trim()+'\n'+$('pin').value.trim();const j=await rpc('api_connexion',{p_pin:cred});b.disabled=false;
  if(!j||!j.ok){$('loginMsg').textContent=(j&&j.erreur)||'Erreur';return}
- store.set('lmstt_ident',$('ident').value,true);PIN=cred;store.del('lmstt_pin');store.set('lmstt_pin',PIN,$('keep').checked);$('login').style.display='none';$('loginMsg').textContent='';st.textContent='Chargement…';load()};
+ store.set('lmstt_ident',$('ident').value,true);PIN=cred;store.del('lmstt_pin');store.set('lmstt_pin',PIN,$('keep').checked);$('login').style.display='none';$('loginMsg').textContent='';st.textContent='Chargement…';location.hash='accueil';load()};
 
 /* ---------- actions ---------- */
 $('vOk').onclick=async()=>{

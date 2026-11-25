@@ -3,7 +3,7 @@
   "short_name": "LMSTT",
   "description": "Espace de gestion du Le Mans Sarthe Tennis de Table",
   "lang": "fr",
-  "start_url": "./?app=lmstt#caisse", "id": "./?app=lmstt",
+  "start_url": "./?app=lmstt#accueil", "id": "./?app=lmstt",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
