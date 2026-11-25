@@ -31,7 +31,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--cyan);outl
 button{font:700 15px Lato,sans-serif;min-height:44px;padding:10px 16px;border-radius:9px;border:0;background:var(--blue);color:#fff;cursor:pointer}
 button.alt{background:transparent;color:var(--blue);border:1px solid var(--blue)}button.del{background:transparent;color:var(--red);padding:6px 10px;min-height:36px}
 button:disabled{opacity:.45;cursor:not-allowed}
-.seg{display:flex;gap:6px}.seg button{flex:1;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.seg button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{flex:1;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.seg button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 .lines .ln{display:grid;grid-template-columns:minmax(0,3fr) 80px 110px 40px;gap:8px;align-items:end;padding:8px 0;border-bottom:1px dashed var(--line)}
 .ln small{grid-column:1/-1;font-size:13px}.warn{color:var(--red);font-weight:700}.okc{color:var(--ok)}
 .total{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin:16px 0;padding:16px;border-radius:12px;background:var(--plum);color:#fff}
@@ -175,6 +175,7 @@ addEventListener('hashchange',route);
 /* ---------- rendu ---------- */
 function fillSelects(){
  const P=S.params,act=S.cat.filter(c=>c.statut!=='Inactif').sort((a,b)=>label(a).localeCompare(label(b)));
+ if(P.modes){if(!P.modes.includes(mode))mode=P.modes.includes('Carte bancaire')?'Carte bancaire':P.modes[0];$('vMode').innerHTML=P.modes.map(m=>`<button type="button" data-m="${esc(m)}"${m===mode?' class="on"':''}>${esc(m)}</button>`).join('')}
  for(const id of ['vUser','aUser','jUser']){const e=$(id),v=e.value;e.innerHTML=opts(P.users,v||P.users[0])}
  const ao=act.map(c=>`<option value="${esc(c.ref)}">${esc(label(c))}</option>`).join('');
  for(const e of document.querySelectorAll('.artSel')){const v=e.value;e.innerHTML='<option value="">— choisir —</option>'+ao;e.value=v}
@@ -259,7 +260,7 @@ function apply(j){
  S.ventes=j.ventes.map(v=>({num:v.num,date:v.date,ach:v.acheteur,lib:v.libelle,ref:v.ref,qte:v.quantite,mt:+v.montant,pa:+v.pa_unitaire,mode:v.mode,user:v.vendeur,com:v.commentaire}));
  S.appros=j.entrees.map(a=>({id:a.id,date:a.date,cde:a.num_commande,four:a.fournisseur,ref:a.ref,qte:a.quantite,pa:+a.prix_achat,com:a.commentaire,user:a.saisi_par}));
  S.ajust=j.ajustements.map(a=>({id:a.id,date:a.date,ref:a.ref,qte:a.quantite,motif:a.motif,com:a.commentaire,user:a.saisi_par}));
- const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[]};
+ const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[],modes:P.modes||['Espèces','Carte bancaire']};
  ROLE=j.role;document.body.classList.toggle('vend',ROLE!=='admin');$('who').textContent=j.nom+(ROLE==='admin'?' · admin':' · vendeur');
  if(ROLE!=='admin'&&['entrees','catalogue'].includes(location.hash.slice(1)))location.hash='caisse';
  st.textContent='À jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});render()}
