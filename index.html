@@ -28,6 +28,7 @@ header h1{font-size:clamp(26px,5vw,38px)}header p{margin:2px 0 12px;opacity:.85;
 nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 nav a{flex:none;color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px 10px 0 0;font-weight:700;font-size:15px;opacity:.85}
 nav a.on{background:var(--bg);color:var(--blue);opacity:1}
+#sub{max-width:1100px;margin:0 auto;padding:12px max(4vw,16px) 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}#sub[hidden]{display:none}#sub a{flex:none;color:var(--mute);text-decoration:none;padding:8px 12px;border-radius:8px 8px 0 0;font-weight:700;font-size:14px;border-bottom:3px solid transparent}#sub a.on{color:var(--blue);border-bottom-color:var(--blue)}
 main{max-width:1100px;margin:0 auto;padding:20px max(4vw,16px) 60px}
 section{display:none}section.on{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
@@ -71,7 +72,8 @@ pre,.scroll{overflow-x:auto}
 @media(prefers-reduced-motion:no-preference){section.on{animation:f .2s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
 <header><div class="top"><div class="logo"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table"></div><div class="ttl"><h1>Espace de Gestion LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
-<nav id="nav"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a><a href="#compte">Mon compte</a></nav></header>
+<nav id="nav"><a href="#caisse" data-g="boutique">Boutique</a><a href="#compte" data-g="compte">Mon compte</a></nav></header>
+<nav id="sub" aria-label="Boutique"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav>
 <main>
 <p id="status"></p>
 
@@ -203,7 +205,7 @@ const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</op
 
 /* ---------- navigation ---------- */
 const views=['caisse','stocks','ventes','entrees','bilan','catalogue','compte'];
-function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'caisse';for(const x of views){$(x).classList.toggle('on',x===v)}for(const a of $('nav').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);render()}
+function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'caisse';for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='compte'?'compte':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';render()}
 addEventListener('hashchange',route);
 
 /* ---------- rendu ---------- */
@@ -366,7 +368,7 @@ route();
 PIN=store.get('lmstt_pin');if(PIN&&!PIN.includes('\n'))PIN='';
 if(PIN){$('login').style.display='none';st.textContent='Chargement…';load()}else loadIdents();
 setInterval(()=>{if(PIN&&!document.hidden)load()},60000);
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+try{navigator.serviceWorker&&navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 addEventListener('online',()=>{if(PIN)load()});addEventListener('offline',()=>{st.textContent='Hors connexion : les ventes ne peuvent pas être enregistrées.'});
 }
 </script>
