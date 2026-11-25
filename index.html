@@ -48,7 +48,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 #login{position:fixed;inset:0;background:var(--blue);display:grid;place-items:center;padding:16px;z-index:20}#login form{width:min(380px,100%)}
 #venH th[data-k]{cursor:pointer;user-select:none;white-space:nowrap}#venH th[data-k]:hover{color:var(--blue)}#venH th[data-k]::after{content:attr(data-ar);color:var(--blue)}
 .mob{display:none}@media(max-width:600px){.mob{display:block}}
-.dh{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px}
+.dh{display:flex;flex-wrap:wrap;gap:10px;grid-column:span 2}.dh>div{flex:1 1 auto}.dh #vDate{min-width:10.5em}.dh #vHeure{min-width:7em}@media(max-width:520px){.dh{grid-column:auto}}
 .usr{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .top{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:10px}.ttl{text-align:center}.ttl p{margin:2px 0 0}.logo{justify-self:start;background:#fff;border-radius:10px;padding:6px;line-height:0}.logo img{height:clamp(44px,8vw,64px);width:auto}.usr{justify-self:end}
 @media(max-width:600px){.top{grid-template-columns:auto 1fr auto}.ttl p{display:none}}
