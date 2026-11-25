@@ -68,7 +68,7 @@ pre,.scroll{overflow-x:auto}
  <div class="card"><h2>Nouvelle vente</h2>
   <div class="grid">
    <div class="dh"><div><label for="vDate">Date</label><input type="date" id="vDate"></div><div><label for="vHeure">Heure</label><input type="time" id="vHeure"></div></div>
-   <div><label for="vAch">Acheteur (Nom Prénom)</label><input id="vAch" list="achList" autocomplete="off" placeholder="ex. Dupont Léa"><datalist id="achList"></datalist></div>
+   <div><label for="vAch">Client (Nom Prénom)</label><input id="vAch" list="achList" autocomplete="off" placeholder="ex. Dupont Léa"><datalist id="achList"></datalist></div>
    <div><label>Vendeur</label><div id="vNom" style="font-weight:700;padding:10px 0"></div><select id="vUser" hidden></select></div>
    <div class="full"><label>Règlement</label><div class="seg" id="vMode"><button type="button" data-m="Espèces">Espèces</button><button type="button" data-m="Carte bancaire" class="on">Carte bancaire</button></div></div>
   </div>
@@ -93,8 +93,8 @@ pre,.scroll{overflow-x:auto}
 </section>
 
 <section id="ventes">
- <div class="card"><div class="row"><div><label for="venS">Saison</label><select id="venS" class="saisonSel"></select></div><div><label for="venQ">Rechercher</label><input id="venQ" placeholder="acheteur, article, vendeur"></div><div class="mob"><label for="venTri">Trier par</label><select id="venTri"><option value="date|-1">Date (récent d'abord)</option><option value="date|1">Date (ancien d'abord)</option><option value="ach|1">Acheteur (A→Z)</option><option value="lib|1">Article (A→Z)</option><option value="mt|-1">Montant (+ → −)</option><option value="mt|1">Montant (− → +)</option><option value="qte|-1">Quantité</option><option value="mode|1">Règlement</option><option value="user|1">Vendeur</option><option value="num|-1">N° de vente</option></select></div><button id="csv" class="alt adm" type="button" style="flex:0 1 auto">Exporter (Excel)</button></div>
- <div class="scroll" style="margin-top:12px"><table class="stack"><thead id="venH"><tr><th data-k="date">Date</th><th data-k="num">N°</th><th data-k="ach">Acheteur</th><th data-k="lib">Article</th><th class="n" data-k="qte">Qté</th><th class="n" data-k="mt">Montant</th><th data-k="mode">Règlement</th><th data-k="user">Vendeur</th><th></th></tr></thead><tbody id="venT"></tbody></table></div></div>
+ <div class="card"><div class="row"><div><label for="venS">Saison</label><select id="venS" class="saisonSel"></select></div><div><label for="venQ">Rechercher</label><input id="venQ" placeholder="client, article, vendeur"></div><div class="mob"><label for="venTri">Trier par</label><select id="venTri"><option value="date|-1">Date (récent d'abord)</option><option value="date|1">Date (ancien d'abord)</option><option value="ach|1">Client (A→Z)</option><option value="lib|1">Article (A→Z)</option><option value="mt|-1">Montant (+ → −)</option><option value="mt|1">Montant (− → +)</option><option value="qte|-1">Quantité</option><option value="mode|1">Règlement</option><option value="user|1">Vendeur</option><option value="num|-1">N° de vente</option></select></div><button id="csv" class="alt adm" type="button" style="flex:0 1 auto">Exporter (Excel)</button></div>
+ <div class="scroll" style="margin-top:12px"><table class="stack"><thead id="venH"><tr><th data-k="date">Date</th><th data-k="num">N°</th><th data-k="ach">Client</th><th data-k="lib">Article</th><th class="n" data-k="qte">Qté</th><th class="n" data-k="mt">Montant</th><th data-k="mode">Règlement</th><th data-k="user">Vendeur</th><th></th></tr></thead><tbody id="venT"></tbody></table></div></div>
 </section>
 
 <section id="entrees">
@@ -290,7 +290,7 @@ $('loginF').onsubmit=async e=>{e.preventDefault();const b=$('loginB');b.disabled
 /* ---------- actions ---------- */
 $('vOk').onclick=async()=>{
  const msg=$('vMsg');msg.textContent='';const ach=$('vAch').value.trim(),L=cart.filter(l=>l.ref);
- if(!ach)return msg.textContent='Indique l\'acheteur.';if(!L.length)return msg.textContent='Choisis au moins un article.';
+ if(!ach)return msg.textContent='Indique le client.';if(!L.length)return msg.textContent='Choisis au moins un article.';
  for(const l of L){if(!(+l.q>0))return msg.textContent='Quantité invalide.';const need=L.filter(x=>x.ref===l.ref).reduce((s,x)=>s+ +x.q,0);if(need>stockOf(l.ref))return msg.textContent='Stock insuffisant pour '+label(byRef(l.ref))+'.'}
  const b=$('vOk');b.disabled=true;
  const j=await act('api_vente',{p:{date:$('vDate').value||today(),heure:$('vHeure').value||nowHM(),acheteur:ach,mode,commentaire:$('vCom').value.trim(),lignes:L.map(l=>({ref:l.ref,qte:+l.q,prix:l.p===''?null:+l.p}))}},'Vente enregistrée ✓');
@@ -312,7 +312,7 @@ $('catT').onclick=e=>{const r=e.target.dataset.edit;if(!r)return;const c=byRef(r
 $('cOk').onclick=async()=>{const des=$('cDes').value.trim(),refP=$('cRef').value.trim();if(!des||!refP)return toast('Désignation et référence requises');
  if(await act('api_article',{p:{ref:editRef||'',ref_principale:refP,declinaison:$('cDecl').value.trim(),designation:des,categorie:$('cCat').value,fournisseur:$('cFour').value,prix_achat:$('cPa').value,prix_vente:$('cPv').value,seuil:$('cSeuil').value,statut:$('cStat').value}},'Article enregistré ✓'))resetCat()};
 $('csv').onclick=()=>{const s=$('venS').value,L=S.ventes.filter(v=>saisonOf(v.date)===s);const q=x=>'"'+String(x??'').replace(/"/g,'""')+'"';
- const rows=[['Date','N°','Acheteur','Article','Réf.','Qté','Montant','PA unitaire','Règlement','Vendeur','Commentaire'],...L.map(v=>[v.date,v.num,v.ach,v.lib,v.ref,v.qte,String(v.mt).replace('.',','),String(v.pa).replace('.',','),v.mode,v.user,v.com])];
+ const rows=[['Date','N°','Client','Article','Réf.','Qté','Montant','PA unitaire','Règlement','Vendeur','Commentaire'],...L.map(v=>[v.date,v.num,v.ach,v.lib,v.ref,v.qte,String(v.mt).replace('.',','),String(v.pa).replace('.',','),v.mode,v.user,v.com])];
  const blob=new Blob(['﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ventes_'+s+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 for(const id of ['stkQ','stkF'])$(id).oninput=renderStocks;
 for(const id of ['venS','venQ'])$(id).oninput=renderVentes;
