@@ -28,7 +28,7 @@ header h1{font-size:clamp(26px,5vw,38px)}header p{margin:2px 0 12px;opacity:.85;
 nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 nav a{flex:none;color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px 10px 0 0;font-weight:700;font-size:15px;opacity:.85}
 nav a.on{background:var(--bg);color:var(--blue);opacity:1}
-#sub{max-width:1100px;margin:0 auto;padding:12px max(4vw,16px) 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}#sub[hidden]{display:none}#sub a{flex:none;color:var(--mute);text-decoration:none;padding:8px 12px;border-radius:8px 8px 0 0;font-weight:700;font-size:14px;border-bottom:3px solid transparent}#sub a.on{color:var(--blue);border-bottom-color:var(--blue)}
+.subn{max-width:1100px;margin:0 auto;padding:12px max(4vw,16px) 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}.subn[hidden]{display:none}.subn a{flex:none;color:var(--mute);text-decoration:none;padding:8px 12px;border-radius:8px 8px 0 0;font-weight:700;font-size:14px;border-bottom:3px solid transparent}.subn a.on{color:var(--blue);border-bottom-color:var(--blue)}
 main{max-width:1100px;margin:0 auto;padding:20px max(4vw,16px) 60px}
 section{display:none}section.on{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
@@ -66,6 +66,8 @@ td.n,th.n{text-align:right;white-space:nowrap}
 .conf{display:flex;gap:12px;align-items:flex-start;margin:16px 0 4px;padding:14px;border:2px solid var(--plum);border-radius:12px;background:var(--card);font-weight:400;font-size:15px;color:var(--ink);cursor:pointer}.conf input{width:24px;height:24px;min-height:0;flex:none;margin-top:2px;accent-color:var(--plum)}
 .lst{margin:0;padding-left:1.2em}.lst li{margin:6px 0}.sect{font-size:24px;color:var(--plum);margin:10px 0 14px}.hello{border-left:6px solid var(--blue)}.hello h2{font-size:clamp(22px,4vw,30px)}
 a.secteur{display:block;color:inherit;text-decoration:none;border:2px solid var(--blue);transition:transform .15s}a.secteur:hover{transform:translateY(-2px)}a.secteur h3{color:var(--blue);font-size:22px}.go{display:inline-block;margin-top:8px;font-weight:700;color:var(--blue)}.soon{border-style:dashed}a.logo{display:block}
+.vl{list-style:none;margin:0;padding:0}.vl li{padding:8px 0;border-bottom:1px solid var(--line)}.vl .l1{display:flex;justify-content:space-between;gap:10px}.vl .l1 b:last-child{white-space:nowrap}.vl .l2{font-size:14px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tree,.tree ul{list-style:none;margin:0;padding-left:0}.tree ul{padding-left:26px;border-left:2px solid var(--line);margin:4px 0 8px 9px}.tree li{padding:5px 0;font-weight:700}.tree ul li{font-weight:400}.ok{color:#1d9a49;font-weight:700}.no{color:var(--red);font-weight:700}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -75,7 +77,8 @@ pre,.scroll{overflow-x:auto}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
 <header><div class="top"><a class="logo" href="https://lemanssarthetennisdetable.net/" target="_blank" rel="noopener" title="Site du Le Mans Sarthe Tennis de Table (nouvel onglet)"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table – ouvrir le site du club"></a><div class="ttl"><h1>Espace de Gestion LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
 <nav id="nav"><a href="#accueil" data-g="accueil">Accueil</a><a href="#compte" data-g="compte">Mon compte</a><a href="#caisse" data-g="boutique">Boutique</a></nav></header>
-<nav id="sub" aria-label="Boutique"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav>
+<nav id="subC" class="subn" aria-label="Mon compte"><a href="#compte">Mes infos</a><a href="#mesventes">Mes ventes</a><a href="#acces">Accès</a></nav>
+<nav id="sub" class="subn" aria-label="Boutique"><a href="#caisse">Caisse</a><a class="adm" href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav>
 <main>
 <p id="status"></p>
 
@@ -179,9 +182,7 @@ pre,.scroll{overflow-x:auto}
  </div>
 </section>
 <section id="compte">
- <div class="kpis" id="cptKpi"></div>
- <div class="card"><h2>Mes informations</h2><table><tbody id="cptInfo"></tbody></table></div>
- <div class="card"><h2>Mes accès par secteur</h2><div class="scroll"><table class="stack"><thead><tr><th>Secteur</th><th>Profil</th><th>Onglets accessibles</th></tr></thead><tbody id="cptAcces"></tbody></table></div></div>
+ <div class="card"><h2>Mes infos</h2><table><tbody id="cptInfo"></tbody></table></div>
  <div class="card"><h2>Changer mon code PIN</h2>
   <form id="pinF" class="grid" autocomplete="off">
    <div><label for="pOld">Code actuel</label><input id="pOld" type="password" required></div>
@@ -191,6 +192,13 @@ pre,.scroll{overflow-x:auto}
   <p class="muted">Choisis 4 chiffres faciles à retenir pour toi, mais évite 1234, 0000 ou ta date de naissance. Ne le communique à personne.</p>
   <p id="pinMsg" class="warn"></p>
   <button id="pinOk" type="button">Changer mon code</button></div>
+</section>
+<section id="mesventes">
+ <div class="kpis" id="cptKpi"></div>
+ <div class="card"><h2 id="mvT2">Mes ventes</h2><ul id="mvList" class="vl"></ul><nav id="mvP" class="pager"></nav></div>
+</section>
+<section id="acces">
+ <div class="card"><h2>Mes accès</h2><p class="muted">Arborescence de l'Espace de Gestion : <span class="ok">✔</span> accessible, <span class="no">✘</span> non accessible avec ton profil.</p><ul id="tree" class="tree"></ul></div>
 </section>
 <section id="catalogue">
  <div class="card"><h2 id="cTitle">Ajouter un article</h2>
@@ -237,8 +245,8 @@ const label=c=>c.des+(c.decl?' – '+c.decl:'');
 const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 
 /* ---------- navigation ---------- */
-const views=['accueil','caisse','stocks','ventes','entrees','bilan','catalogue','compte'];
-function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='compte'||v==='accueil'?v:'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';render()}
+const views=['accueil','mesventes','acces','caisse','stocks','ventes','entrees','bilan','catalogue','compte'];
+function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='accueil'?'accueil':['compte','mesventes','acces'].includes(v)?'compte':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';for(const a of $('subC').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subC').hidden=g!=='compte';render()}
 addEventListener('hashchange',route);
 
 /* ---------- rendu ---------- */
@@ -309,7 +317,7 @@ function renderCat(){
  $('catT').innerHTML=[...S.cat].sort((a,b)=>a.cat.localeCompare(b.cat)||label(a).localeCompare(label(b))).map(c=>`<tr><td><b>${esc(label(c))}</b></td><td>${esc(c.ref)}</td><td>${esc(c.cat)}</td><td class="n">${eur(c.pa)}</td><td class="n">${eur(c.pv)}</td><td class="n">${eur(c.pv-c.pa)}</td><td>${esc(c.statut)}</td><td><button class="del" style="color:var(--blue)" type="button" data-edit="${esc(c.ref)}">Modifier</button></td></tr>`).join('');
 }
 function render(){fillSelects();const v=location.hash.slice(1)||'caisse';
- if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='compte')renderCompte();else if(v==='accueil')$('helloT').textContent=$('vNom').textContent?'Bonjour '+$('vNom').textContent+', bienvenue dans l\'Espace de Gestion LMSTT':'Bienvenue dans l\'Espace de Gestion LMSTT'}
+ if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(['compte','mesventes','acces'].includes(v))renderCompte();else if(v==='accueil')$('helloT').textContent=$('vNom').textContent?'Bonjour '+$('vNom').textContent+', bienvenue dans l\'Espace de Gestion LMSTT':'Bienvenue dans l\'Espace de Gestion LMSTT'}
 
 /* ---------- actions ---------- */
 $('vMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;for(const x of $('vMode').children)x.classList.toggle('on',x===b);calcTot()};
@@ -341,10 +349,16 @@ async function load(){const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok)
 async function act(fn,args,okMsg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');return null}toast(okMsg);await load();return j}
 function logout(){PIN='';store.del('lmstt_pin');$('login').style.display='grid';$('pin').value='';loadIdents()}
 $('logout').onclick=logout;
+let MV=[],mvPage=1;
+function renderMesVentes(){const n=Math.max(1,Math.ceil(MV.length/10));if(mvPage>n)mvPage=n;
+ $('mvList').innerHTML=MV.slice((mvPage-1)*10,mvPage*10).map(v=>`<li><div class="l1"><span>${esc(fdate(v.date))}${v.heure?' · '+esc(v.heure):''} — <b>${esc(v.client)}</b></span><b>${eur(v.montant)}</b></div><div class="l2">${esc(v.article)} ×${v.qte} · ${lblMode(v.mode)} · ${esc(v.num)}</div></li>`).join('')||'<li class="muted">Aucune vente cette saison.</li>';
+ $('mvP').innerHTML=n>1?Array.from({length:n},(_,i)=>`<button type="button" data-p="${i+1}"${i+1===mvPage?' class="on"':''}>${i+1}</button>`).join('')+`<span class="muted">${MV.length} ventes</span>`:''}
 async function renderCompte(){if(!PIN)return;const j=await rpc('api_compte',{p_pin:PIN});if(!j||!j.ok)return;
  $('cptKpi').innerHTML=`<div class="kpi"><span>Mes ventes aujourd'hui</span><b>${eur(j.montant_jour)}</b><span>${j.nb_jour} ligne(s)</span></div><div class="kpi"><span>Mes ventes saison ${esc(j.saison)}</span><b>${eur(j.montant)}</b><span>${j.nb_ventes} ligne(s)</span></div>`;
  const d=j.derniere?esc(fdate(j.derniere.slice(0,10)))+' '+esc(j.derniere.slice(11)):'—';
- const adm=j.role==='admin';$('cptAcces').innerHTML=`<tr><td><b>Boutique</b></td><td>${adm?'Administrateur':'Vendeur'}</td><td>${adm?'Caisse, Stocks, Ventes, Entrées &amp; ajustements, Bilan, Catalogue':'Caisse'}</td></tr>`;
+ const adm=j.role==='admin',Y='<span class="ok" aria-label="accessible">✔</span>',N='<span class="no" aria-label="non accessible">✘</span>',it=(ok,t)=>`<li>${ok?Y:N} ${t}</li>`;
+ $('tree').innerHTML=it(1,'Accueil')+`<li>${Y} Mon compte<ul>${it(1,'Mes infos')+it(1,'Mes ventes')+it(1,'Accès')}</ul></li><li>${Y} Boutique <span class="muted">(${adm?'administrateur':'vendeur'})</span><ul>${it(1,'Caisse')+it(adm,'Stocks')+it(adm,'Ventes')+it(adm,'Entrées &amp; ajustements')+it(adm,'Bilan')+it(adm,'Catalogue')}</ul></li>`;
+ MV=j.ventes||[];mvPage=1;$('mvT2').textContent='Mes ventes – saison '+j.saison;renderMesVentes();
  $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${j.role==='admin'?'Administrateur (accès complet)':'Vendeur (caisse)'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
 $('pinOk').onclick=async()=>{const m=$('pinMsg'),o=$('pOld').value,n=$('pNew').value,n2=$('pNew2').value;m.className='warn';m.textContent='';
  if(!o||!n)return m.textContent='Remplis les trois cases.';if(!/^[0-9]{4}$/.test(n))return m.textContent='Le nouveau code doit faire exactement 4 chiffres.';if(n!==n2)return m.textContent='Les deux nouveaux codes ne sont pas identiques.';
@@ -390,6 +404,7 @@ $('csv').onclick=()=>{const s=$('venS').value,L=S.ventes.filter(v=>saisonOf(v.da
  const blob=new Blob(['﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ventes_'+s+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 for(const id of ['stkQ','stkF'])$(id).oninput=renderStocks;
 for(const id of ['venS','venQ'])$(id).oninput=()=>{vPage=1;renderVentes()};
+$('mvP').onclick=e=>{const b=e.target.closest('button[data-p]');if(!b)return;mvPage=+b.dataset.p;renderMesVentes()};
 $('venP').onclick=e=>{const b=e.target.closest('button[data-p]');if(!b||b.disabled)return;vPage=+b.dataset.p;renderVentes();$('venT').closest('.card').scrollIntoView({behavior:'smooth',block:'start'})};
 $('venTri').onchange=e=>{const [k,d]=e.target.value.split('|');vSort={k,d:+d};vPage=1;renderVentes()};
 $('venH').onclick=e=>{const th=e.target.closest('th[data-k]');if(!th)return;const k=th.dataset.k;vSort=vSort.k===k?{k,d:-vSort.d}:{k,d:['date','num','qte','mt'].includes(k)?-1:1};vPage=1;renderVentes()};
