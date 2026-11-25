@@ -54,7 +54,7 @@ pre,.scroll{overflow-x:auto}
 @media(prefers-reduced-motion:no-preference){section.on{animation:f .2s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head><body>
 <header><div class="top"><h1>Boutique LMSTT</h1><div><span id="who"></span> <button id="logout" class="alt out" type="button">Quitter</button></div></div><p>Caisse, stocks et bilan de saison · Plaisir Partage Performance</p>
-<nav id="nav"><a href="#caisse">Caisse</a><a href="#stocks">Stocks</a><a href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav></header>
+<nav id="nav"><a href="#caisse">Caisse</a><a href="#stocks">Stocks</a><a class="adm" href="#ventes">Ventes</a><a class="adm" href="#entrees">Entrées &amp; ajustements</a><a class="adm" href="#bilan">Bilan</a><a class="adm" href="#catalogue">Catalogue</a></nav></header>
 <main>
 <p id="status"></p>
 
@@ -63,7 +63,7 @@ pre,.scroll{overflow-x:auto}
   <div class="grid">
    <div><label for="vDate">Date</label><input type="date" id="vDate"></div>
    <div><label for="vAch">Acheteur (Nom Prénom)</label><input id="vAch" list="achList" autocomplete="off" placeholder="ex. Dupont Léa"><datalist id="achList"></datalist></div>
-   <div><label for="vUser">Vendeur</label><select id="vUser"></select></div>
+   <div><label>Vendeur</label><div id="vNom" style="font-weight:700;padding:10px 0"></div><select id="vUser" hidden></select></div>
    <div><label>Règlement</label><div class="seg" id="vMode"><button type="button" data-m="Espèces">Espèces</button><button type="button" data-m="Carte bancaire" class="on">Carte bancaire</button></div></div>
   </div>
   <h3>Panier</h3>
@@ -83,7 +83,7 @@ pre,.scroll{overflow-x:auto}
 <section id="stocks">
  <div class="kpis" id="stkKpi"></div>
  <div class="card"><div class="row"><div><label for="stkQ">Rechercher</label><input id="stkQ" placeholder="article, réf., catégorie"></div><div><label for="stkF">Afficher</label><select id="stkF"><option value="">Articles actifs</option><option value="alerte">En alerte / rupture</option><option value="tous">Tous (y compris inactifs)</option></select></div></div>
- <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Article</th><th>Catégorie</th><th class="n">Stock</th><th class="n">Seuil</th><th>État</th><th class="n">Valeur PA</th><th class="n">Prix vente</th></tr></thead><tbody id="stkT"></tbody></table></div></div>
+ <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Article</th><th>Catégorie</th><th class="n">Stock</th><th class="n">Seuil</th><th>État</th><th class="n adm">Valeur PA</th><th class="n">Prix vente</th></tr></thead><tbody id="stkT"></tbody></table></div></div>
 </section>
 
 <section id="ventes">
@@ -144,8 +144,9 @@ pre,.scroll{overflow-x:auto}
 </section>
 </main>
 <div id="toast"></div>
-<div id="login"><form id="loginF" class="card"><h2>Boutique LMSTT</h2><p class="muted">Saisis ton code PIN pour accéder à la caisse.</p>
-<label for="pin">Code PIN</label><input id="pin" type="password" autocomplete="off" autocapitalize="off" required>
+<div id="login"><form id="loginF" class="card"><h2>Boutique LMSTT</h2><p class="muted">Connecte-toi pour accéder à la caisse.</p>
+<label for="ident">Identifiant</label><input id="ident" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+<label for="pin" style="margin-top:12px">Code PIN</label><input id="pin" type="password" autocomplete="current-password" autocapitalize="off" required>
 <label style="display:flex;gap:8px;align-items:center;margin:12px 0;font-weight:400"><input type="checkbox" id="keep" style="width:auto;min-height:0"> Rester connecté sur cet appareil</label>
 <button id="loginB" type="submit" style="width:100%">Entrer</button><p id="loginMsg" class="warn"></p></form></div>
 
@@ -163,7 +164,7 @@ const S={cat:[],ventes:[],appros:[],ajust:[],params:{users:['Jérôme'],cats:[],
 let mode='Carte bancaire',cart=[{ref:'',q:1,p:''}],editRef=null;
 
 const byRef=r=>S.cat.find(c=>c.ref===r);
-const stockOf=r=>{const c=byRef(r);let s=c?+c.init||0:0;for(const a of S.appros)if(a.ref===r)s+=+a.qte;for(const v of S.ventes)if(v.ref===r)s-=+v.qte;for(const j of S.ajust)if(j.ref===r)s+=+j.qte;return s};
+const stockOf=r=>{const c=byRef(r);return c?+c.stock||0:0};
 const label=c=>c.des+(c.decl?' – '+c.decl:'');
 const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 
@@ -204,10 +205,10 @@ function renderStocks(){
  const q=$('stkQ').value.toLowerCase(),f=$('stkF').value;let nb=0,vpa=0,vpv=0,al=0;
  const rows=S.cat.map(c=>({c,s:stockOf(c.ref)})).sort((a,b)=>a.c.cat.localeCompare(b.c.cat)||label(a.c).localeCompare(label(b.c)));
  for(const {c,s} of rows)if(c.statut!=='Inactif'){nb+=s;vpa+=s*c.pa;vpv+=s*c.pv;if(s<=0||(c.seuil&&s<=c.seuil))al++}
- $('stkKpi').innerHTML=`<div class="kpi"><span>Pièces en stock</span><b>${nb}</b></div><div class="kpi"><span>Valeur au prix d'achat</span><b>${eur(vpa)}</b></div><div class="kpi"><span>Valeur au prix de vente</span><b>${eur(vpv)}</b></div><div class="kpi"><span>Articles en alerte / rupture</span><b style="color:var(--red)">${al}</b></div>`;
+ $('stkKpi').innerHTML=`<div class="kpi"><span>Pièces en stock</span><b>${nb}</b></div><div class="kpi adm"><span>Valeur au prix d'achat</span><b>${eur(vpa)}</b></div><div class="kpi"><span>Valeur au prix de vente</span><b>${eur(vpv)}</b></div><div class="kpi"><span>Articles en alerte / rupture</span><b style="color:var(--red)">${al}</b></div>`;
  $('stkT').innerHTML=rows.filter(({c,s})=>(f==='tous'||c.statut!=='Inactif')&&(f!=='alerte'||s<=0||(c.seuil&&s<=c.seuil))&&(!q||(label(c)+c.ref+c.cat).toLowerCase().includes(q))).map(({c,s})=>{
   const t=s<=0?'<span class="tag t-r">Rupture</span>':c.seuil&&s<=c.seuil?'<span class="tag t-a">Alerte</span>':'<span class="tag t-o">OK</span>';
-  return `<tr><td><b>${esc(label(c))}</b><br><span class="muted">${esc(c.ref)}</span></td><td>${esc(c.cat)}</td><td class="n"><b>${s}</b></td><td class="n">${c.seuil||'–'}</td><td>${c.statut==='Inactif'?'<span class="tag">Inactif</span>':t}</td><td class="n">${eur(s*c.pa)}</td><td class="n">${eur(c.pv)}</td></tr>`}).join('')||'<tr><td colspan="7" class="muted">Aucun article.</td></tr>';
+  return `<tr><td><b>${esc(label(c))}</b><br><span class="muted">${esc(c.ref)}</span></td><td>${esc(c.cat)}</td><td class="n"><b>${s}</b></td><td class="n">${c.seuil||'–'}</td><td>${c.statut==='Inactif'?'<span class="tag">Inactif</span>':t}</td><td class="n adm">${eur(s*c.pa)}</td><td class="n">${eur(c.pv)}</td></tr>`}).join('')||'<tr><td colspan="7" class="muted">Aucun article.</td></tr>';
 }
 function renderVentes(){
  const s=$('venS').value,q=$('venQ').value.toLowerCase();
@@ -256,22 +257,22 @@ async function rpc(fn,args){const ctl=new AbortController(),t=setTimeout(()=>ctl
  finally{clearTimeout(t)}}
 const st=$('status');
 function apply(j){
- S.cat=j.catalogue.map(c=>({ref:c.ref,refP:c.ref_principale,decl:c.declinaison,des:c.designation,cat:c.categorie,four:c.fournisseur,pa:+c.prix_achat,pv:+c.prix_vente,seuil:c.seuil,init:c.stock_initial,statut:c.statut}));
+ S.cat=j.catalogue.map(c=>({ref:c.ref,refP:c.ref_principale,decl:c.declinaison,des:c.designation,cat:c.categorie,four:c.fournisseur,pa:+c.prix_achat,pv:+c.prix_vente,stock:c.stock,seuil:c.seuil,init:c.stock_initial,statut:c.statut}));
  S.ventes=j.ventes.map(v=>({num:v.num,date:v.date,ach:v.acheteur,lib:v.libelle,ref:v.ref,qte:v.quantite,mt:+v.montant,pa:+v.pa_unitaire,mode:v.mode,user:v.vendeur,com:v.commentaire}));
  S.appros=j.entrees.map(a=>({id:a.id,date:a.date,cde:a.num_commande,four:a.fournisseur,ref:a.ref,qte:a.quantite,pa:+a.prix_achat,com:a.commentaire,user:a.saisi_par}));
  S.ajust=j.ajustements.map(a=>({id:a.id,date:a.date,ref:a.ref,qte:a.quantite,motif:a.motif,com:a.commentaire,user:a.saisi_par}));
  const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[],modes:P.modes||['Espèces','Carte bancaire']};
- ROLE=j.role;document.body.classList.toggle('vend',ROLE!=='admin');$('who').textContent=j.nom+(ROLE==='admin'?' · admin':' · vendeur');
- if(ROLE!=='admin'&&['entrees','catalogue'].includes(location.hash.slice(1)))location.hash='caisse';
+ ROLE=j.role;$('vNom').textContent=j.nom;document.body.classList.toggle('vend',ROLE!=='admin');$('who').textContent=j.nom+(ROLE==='admin'?' · admin':' · vendeur');
+ if(ROLE!=='admin'&&['ventes','bilan','entrees','catalogue'].includes(location.hash.slice(1)))location.hash='caisse';
  st.textContent='À jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});render()}
 async function load(){const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok){st.textContent=(j&&j.erreur)||'Erreur';if(j&&/PIN/.test(j.erreur))logout();return false}apply(j);return true}
 async function act(fn,args,okMsg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');return null}toast(okMsg);await load();return j}
-function logout(){PIN='';store.del('lmstt_pin');$('login').style.display='grid';$('pin').value=''}
+function logout(){PIN='';store.del('lmstt_pin');$('login').style.display='grid';$('pin').value='';$('ident').focus()}
 $('logout').onclick=logout;
 $('loginF').onsubmit=async e=>{e.preventDefault();const b=$('loginB');b.disabled=true;$('loginMsg').textContent='Connexion…';
- const j=await rpc('api_connexion',{p_pin:$('pin').value.trim()});b.disabled=false;
+ const cred=$('ident').value.trim()+'\n'+$('pin').value.trim();const j=await rpc('api_connexion',{p_pin:cred});b.disabled=false;
  if(!j||!j.ok){$('loginMsg').textContent=(j&&j.erreur)||'Erreur';return}
- PIN=$('pin').value.trim();store.del('lmstt_pin');store.set('lmstt_pin',PIN,$('keep').checked);$('login').style.display='none';$('loginMsg').textContent='';st.textContent='Chargement…';load()};
+ PIN=cred;store.del('lmstt_pin');store.set('lmstt_pin',PIN,$('keep').checked);$('login').style.display='none';$('loginMsg').textContent='';st.textContent='Chargement…';load()};
 
 /* ---------- actions ---------- */
 $('vOk').onclick=async()=>{
@@ -279,7 +280,7 @@ $('vOk').onclick=async()=>{
  if(!ach)return msg.textContent='Indique l\'acheteur.';if(!L.length)return msg.textContent='Choisis au moins un article.';
  for(const l of L){if(!(+l.q>0))return msg.textContent='Quantité invalide.';const need=L.filter(x=>x.ref===l.ref).reduce((s,x)=>s+ +x.q,0);if(need>stockOf(l.ref))return msg.textContent='Stock insuffisant pour '+label(byRef(l.ref))+'.'}
  const b=$('vOk');b.disabled=true;
- const j=await act('api_vente',{p:{date:$('vDate').value||today(),acheteur:ach,mode,vendeur:$('vUser').value,commentaire:$('vCom').value.trim(),lignes:L.map(l=>({ref:l.ref,qte:+l.q,prix:l.p===''?null:+l.p}))}},'Vente enregistrée ✓');
+ const j=await act('api_vente',{p:{date:$('vDate').value||today(),acheteur:ach,mode,commentaire:$('vCom').value.trim(),lignes:L.map(l=>({ref:l.ref,qte:+l.q,prix:l.p===''?null:+l.p}))}},'Vente enregistrée ✓');
  if(j){cart=[{ref:'',q:1,p:''}];$('vAch').value='';$('vCom').value='';$('vRecu').value='';renderCart()}else msg.textContent='Vente non enregistrée.';
  b.disabled=false};
 $('venT').onclick=async e=>{const n=e.target.dataset.delv;if(!n)return;if(e.target.dataset.c!=='1'){e.target.dataset.c='1';e.target.textContent='Confirmer ?';return}
@@ -307,7 +308,7 @@ $('bS').oninput=renderBilan;
 /* ---------- démarrage ---------- */
 for(const id of ['vDate','aDate','jDate'])$(id).value=today();
 route();
-PIN=store.get('lmstt_pin');
+PIN=store.get('lmstt_pin');if(PIN&&!PIN.includes('\n'))PIN='';
 if(PIN){$('login').style.display='none';st.textContent='Chargement…';load()}
 setInterval(()=>{if(PIN&&!document.hidden)load()},60000);
 }
