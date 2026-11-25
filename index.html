@@ -31,7 +31,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--cyan);outl
 button{font:700 15px Lato,sans-serif;min-height:44px;padding:10px 16px;border-radius:9px;border:0;background:var(--blue);color:#fff;cursor:pointer}
 button.alt{background:transparent;color:var(--blue);border:1px solid var(--blue)}button.del{background:transparent;color:var(--red);padding:6px 10px;min-height:36px}
 button:disabled{opacity:.45;cursor:not-allowed}
-.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{flex:1;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.seg button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.full{grid-column:1/-1}.seg{display:flex;gap:6px;flex-wrap:nowrap}.seg button{padding:10px 8px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}.seg button{flex:1;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.seg button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 .lines .ln{display:grid;grid-template-columns:minmax(0,3fr) 80px 110px 40px;gap:8px;align-items:end;padding:8px 0;border-bottom:1px dashed var(--line)}
 .ln small{grid-column:1/-1;font-size:13px}.warn{color:var(--red);font-weight:700}.okc{color:var(--ok)}
 .total{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin:16px 0;padding:16px;border-radius:12px;background:var(--plum);color:#fff}
@@ -64,7 +64,7 @@ pre,.scroll{overflow-x:auto}
    <div><label for="vDate">Date</label><input type="date" id="vDate"></div>
    <div><label for="vAch">Acheteur (Nom Prénom)</label><input id="vAch" list="achList" autocomplete="off" placeholder="ex. Dupont Léa"><datalist id="achList"></datalist></div>
    <div><label>Vendeur</label><div id="vNom" style="font-weight:700;padding:10px 0"></div><select id="vUser" hidden></select></div>
-   <div><label>Règlement</label><div class="seg" id="vMode"><button type="button" data-m="Espèces">Espèces</button><button type="button" data-m="Carte bancaire" class="on">Carte bancaire</button></div></div>
+   <div class="full"><label>Règlement</label><div class="seg" id="vMode"><button type="button" data-m="Espèces">Espèces</button><button type="button" data-m="Carte bancaire" class="on">Carte bancaire</button></div></div>
   </div>
   <h3>Panier</h3>
   <div class="lines" id="lines"></div>
