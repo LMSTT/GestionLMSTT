@@ -73,6 +73,7 @@ tr.ann td{opacity:.55;text-decoration:line-through}tr.ann td:last-child{opacity:
 .mot{min-height:36px;padding:6px 8px;font-size:14px;width:9em}.acts{display:flex;flex-wrap:wrap;gap:4px}.acts button{min-height:34px;padding:5px 9px;font-size:13px}
 .acc{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:14px 0 0}.acc legend{font-weight:700;color:var(--blue);padding:0 6px}.accg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:0 14px}.acc .row button{flex:0 1 auto;min-height:36px;padding:6px 12px;font-size:14px}
 #lock{position:fixed;inset:0;background:var(--plum);display:grid;place-items:center;padding:16px;z-index:30}#lock[hidden]{display:none}#lock form{width:min(380px,100%)}.cur{font-size:12px;font-weight:700;color:var(--ok);border:1px solid currentColor;border-radius:20px;padding:1px 8px;margin-left:6px}
+.foot{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--mute);text-align:center}.foot a{color:var(--mute)}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -165,7 +166,8 @@ pre,.scroll{overflow-x:auto}
    <li><b>Accueil</b> : cette page de présentation.</li>
    <li><b>Mon compte</b> : tes informations, tes ventes et tes accès. Tu peux y changer ton code PIN (4 chiffres).</li>
    <li><b>Les secteurs</b> (Boutique…) : chacun a ses propres sous-onglets, juste sous le bandeau bleu.</li>
-   <li>Le <b>logo</b> en haut à gauche ouvre le site du club dans un nouvel onglet.</li></ul></div>
+   <li>Le <b>logo</b> en haut à gauche ouvre le site du club dans un nouvel onglet.</li>
+   <li>Les règles sur les <a href="#confidentialite">données personnelles</a> sont en bas de chaque page.</li></ul></div>
   <div class="card"><h3>Bonnes pratiques</h3><ul class="lst">
    <li>Ton code PIN est personnel : ne le communique à personne.</li>
    <li>Sur un appareil partagé (PC du club), clique sur <b>Déconnexion</b> en partant.</li>
@@ -250,6 +252,24 @@ pre,.scroll{overflow-x:auto}
   <p class="muted">Les nouvelles durées s'appliquent aux prochaines connexions. Le verrouillage redemande le code PIN sans fermer la session : utile sur les postes partagés.</p>
   <button id="rgOk" type="button">Enregistrer les réglages</button></div>
 </section>
+<section id="confidentialite">
+ <div class="card"><h2>Données personnelles et confidentialité</h2>
+  <p>L'Espace de Gestion LMSTT est un outil interne du <b>Le Mans Sarthe Tennis de Table</b> (association loi 1901, Salle Micheline Ostermeyer, 51 rue Garnier Pagès, Le Mans). L'association est responsable des données qui y sont enregistrées.</p>
+  <h3>Quelles données ?</h3><ul class="lst">
+   <li><b>Clients de la boutique</b> : nom et prénom, articles achetés, montant, date et mode de règlement.</li>
+   <li><b>Utilisateurs de l'appli</b> : nom, identifiant, code PIN (stocké chiffré, illisible même par l'administrateur), droits d'accès, appareils et dates de connexion.</li>
+   <li><b>Journal d'activité</b> : qui a fait quelle action et quand (ventes, annulations, modifications).</li></ul>
+  <h3>Pourquoi ?</h3><ul class="lst">
+   <li>Gérer la boutique du club : ventes, stocks, suivi des encaissements et comptabilité.</li>
+   <li>Sécuriser l'outil et garder une trace des opérations (contrôle interne).</li></ul>
+  <h3>Qui y a accès ?</h3><p>Uniquement les bénévoles et salariés du club disposant d'un compte, selon les droits attribués par l'administrateur. Aucune donnée n'est vendue, ni transmise à des tiers. Les données sont hébergées dans l'Union européenne (Francfort).</p>
+  <h3>Combien de temps ?</h3><ul class="lst">
+   <li>Ventes et mouvements de stock : 10 ans (pièces comptables).</li>
+   <li>Journal d'activité : 1 an.</li>
+   <li>Comptes utilisateurs : supprimés ou désactivés au départ de la personne.</li></ul>
+  <h3>Vos droits</h3><p>Toute personne concernée peut demander l'accès, la rectification ou l'effacement de ses données (dans la limite des obligations comptables), en s'adressant au responsable de la boutique ou au président du club. En cas de difficulté : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr</a>.</p>
+  <p class="muted">Utilisateurs : ne saisissez dans les commentaires aucune information sans rapport avec la vente (santé, situation personnelle…).</p></div>
+</section>
 <section id="adm-journal">
  <div class="card"><h2>Journal d'activité</h2><div class="row"><div><label for="jrQ">Filtrer</label><input id="jrQ" placeholder="nom, action, n° de vente…"></div></div>
  <ul id="jrL" class="vl" style="margin-top:12px"></ul><nav id="jrP" class="pager"></nav><p class="muted">Les 500 dernières actions : connexions, ventes, annulations, mouvements de stock, articles, utilisateurs, paramètres.</p></div>
@@ -280,6 +300,7 @@ pre,.scroll{overflow-x:auto}
   <div class="row" style="margin-top:12px"><button id="cOk" type="button">Enregistrer l'article</button><button id="cNew" class="alt" type="button">Nouveau</button></div></div>
  <div class="card"><div class="scroll"><table class="stack"><thead><tr><th>Article</th><th>Réf.</th><th>Catégorie</th><th class="n">PA</th><th class="n">PV</th><th class="n">Marge</th><th>Statut</th><th></th></tr></thead><tbody id="catT"></tbody></table></div></div>
 </section>
+<footer class="foot"><a href="#confidentialite">Données personnelles</a> · <a href="https://lemanssarthetennisdetable.net/" target="_blank" rel="noopener">Site du club</a> · Espace de Gestion LMSTT</footer>
 </main>
 <div id="toast"></div>
 <div id="lock" hidden><form id="lockF" class="card"><h2>Écran verrouillé</h2><p>Session de <b id="lockNom"></b> en pause.</p>
@@ -313,14 +334,14 @@ const label=c=>c.des+(c.decl?' – '+c.decl:'');
 const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 
 /* ---------- navigation ---------- */
-const views=['accueil','mesventes','acces','appareils','adm-sessions','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
+const views=['confidentialite','accueil','mesventes','acces','appareils','adm-sessions','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
 const KEYS=['caisse','stocks','ventes','ventes_annuler','entrees','bilan','catalogue'],LBL={caisse:'Caisse',stocks:'Stocks',ventes:'Ventes',ventes_annuler:'Annuler des ventes',entrees:'Entrées & ajustements',bilan:'Bilan',catalogue:'Catalogue'};
 let DR={},MUST=false,READY=false;
 const isAdm=()=>!!DR.administration;
-function allowed(v){if(['accueil','compte','mesventes','acces','appareils'].includes(v))return !MUST||v==='compte';if(MUST)return false;
+function allowed(v){if(v==='confidentialite')return true;if(['accueil','compte','mesventes','acces','appareils'].includes(v))return !MUST||v==='compte';if(MUST)return false;
  if(['caisse','stocks','ventes','entrees','bilan','catalogue'].includes(v))return !!DR[v];if(v.startsWith('adm-'))return isAdm();return false}
 function route(){let v=views.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
- if(READY&&!allowed(v)){location.hash=MUST?'compte':'accueil';return}for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='accueil'?'accueil':['compte','mesventes','acces','appareils'].includes(v)?'compte':v.startsWith('adm-')?'admin':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';for(const a of $('subC').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subC').hidden=g!=='compte';for(const a of $('subA').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subA').hidden=g!=='admin';render()}
+ if(READY&&!allowed(v)){location.hash=MUST?'compte':'accueil';return}for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='accueil'||v==='confidentialite'?'accueil':['compte','mesventes','acces','appareils'].includes(v)?'compte':v.startsWith('adm-')?'admin':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';for(const a of $('subC').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subC').hidden=g!=='compte';for(const a of $('subA').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subA').hidden=g!=='admin';render()}
 addEventListener('hashchange',route);
 
 /* ---------- rendu ---------- */
