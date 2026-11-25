@@ -1,9 +1,9 @@
 {
   "name": "LMSTT",
   "short_name": "LMSTT",
-  "description": "Caisse et stocks de la boutique du Le Mans Sarthe Tennis de Table",
+  "description": "Espace de gestion du Le Mans Sarthe Tennis de Table",
   "lang": "fr",
-  "start_url": "./#caisse",
+  "start_url": "./?app=lmstt#caisse", "id": "./?app=lmstt",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
