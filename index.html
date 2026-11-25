@@ -166,7 +166,7 @@ pre,.scroll{overflow-x:auto}
   <div class="card"><h3>Se repérer</h3><ul class="lst">
    <li><b>Accueil</b> : cette page de présentation.</li>
    <li><b>Mon compte</b> : tes informations, tes ventes et tes accès. Tu peux y changer ton code PIN (4 chiffres).</li>
-   <li><b>Les secteurs</b> (Boutique…) : chacun a ses propres sous-onglets, juste sous le bandeau bleu.</li>
+   <li><b>Les secteurs</b> (Boutique, Équipementier, Administration…) : chacun a ses propres sous-onglets, juste sous le bandeau bleu. Tu ne vois que ceux auxquels tu as accès.</li>
    <li>Le <b>logo</b> en haut à gauche ouvre le site du club dans un nouvel onglet.</li>
    <li>Les règles sur les <a href="#confidentialite">données personnelles</a> sont en bas de chaque page.</li></ul></div>
   <div class="card"><h3>Bonnes pratiques</h3><ul class="lst">
@@ -187,6 +187,15 @@ pre,.scroll{overflow-x:auto}
     <li class="need-bilan"><b>Bilan</b> : chiffre d'affaires, marge et meilleures ventes de la saison (1er août – 31 juillet).</li>
     <li class="need-catalogue"><b>Catalogue</b> : articles, prix et seuils d'alerte.</li></ul>
    <span class="go">Ouvrir la boutique ›</span></a>
+  <a class="card secteur need-equipementier" href="#eq-bord"><h3>🤝 Équipementier</h3>
+   <p>Suivi du partenariat Tibhar / Dauphin. <b>Confidentiel</b> : visible uniquement par les comptes autorisés nommément.</p>
+   <ul class="lst">
+    <li><b>Tableau de bord</b> : dotation de la saison, reste à utiliser, CA Dauphin face à l'objectif, achats boutique chez Dauphin.</li>
+    <li><b>CA Dauphin</b> : saisie mensuelle du chiffre d'affaires réalisé par les adhérents avec le code club.</li>
+    <li><b>Dotations</b> : matériel demandé, commandé ou reçu, valorisé en €.</li></ul>
+   <span class="go">Ouvrir Équipementier ›</span></a>
+  <div class="card secteur need-admin" style="border-color:var(--plum)"><h3>⚙️ Administration</h3>
+   <p>Réservé aux administrateurs : utilisateurs et droits, sessions, journal d'activité, paramètres et sauvegardes.</p></div>
   <div class="card soon"><h3>Prochains secteurs</h3><p class="muted">D'autres secteurs de gestion du club pourront être ajoutés ici au fil du temps.</p></div>
  </div>
 </section>
@@ -231,7 +240,11 @@ pre,.scroll{overflow-x:auto}
     <label class="chk"><input type="checkbox" value="catalogue"> Catalogue <span class="muted">– articles, prix</span></label>
    </div>
    <div class="row" style="margin-top:6px"><button type="button" class="alt" data-preset="caisse">Vendeur</button><button type="button" class="alt" data-preset="stocks,ventes,bilan">Consultation</button><button type="button" class="alt" data-preset="caisse,stocks,ventes,ventes_annuler,entrees,bilan,catalogue">Tout</button><button type="button" class="alt" data-preset="">Aucun</button></div>
-   <p class="muted" id="uAccNote">Un administrateur a automatiquement accès à tout.</p>
+   <p class="muted" id="uAccNote">Un administrateur a automatiquement accès à toute la Boutique.</p>
+  </fieldset>
+  <fieldset class="acc need-equipementier" id="uEq"><legend>Équipementier (confidentiel)</legend>
+   <label class="chk"><input type="checkbox" value="equipementier"> Accès à Équipementier <span class="muted">– tableau de bord, CA Dauphin, dotations</span></label>
+   <p class="muted">Jamais automatique, même pour un administrateur : à donner nommément.</p>
   </fieldset>
   <p id="uMsg" class="warn"></p>
   <div class="row"><button id="uOk" type="button">Enregistrer</button><button id="uNew" class="alt" type="button">Nouveau</button></div></div>
@@ -380,7 +393,7 @@ const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</op
 
 /* ---------- navigation ---------- */
 const views=['eq-bord','eq-ca','eq-dot','confidentialite','accueil','mesventes','acces','appareils','adm-sessions','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
-const KEYS=['caisse','stocks','ventes','ventes_annuler','entrees','bilan','catalogue'],LBL={caisse:'Caisse',stocks:'Stocks',ventes:'Ventes',ventes_annuler:'Annuler des ventes',entrees:'Entrées & ajustements',bilan:'Bilan',catalogue:'Catalogue'};
+const KEYS=['caisse','stocks','ventes','ventes_annuler','entrees','bilan','catalogue'],LBL={equipementier:'Équipementier',caisse:'Caisse',stocks:'Stocks',ventes:'Ventes',ventes_annuler:'Annuler des ventes',entrees:'Entrées & ajustements',bilan:'Bilan',catalogue:'Catalogue'};
 let DR={},MUST=false,READY=false;
 const isAdm=()=>!!DR.administration;
 function allowed(v){if(v==='confidentialite')return true;if(['accueil','compte','mesventes','acces','appareils'].includes(v))return !MUST||v==='compte';if(MUST)return false;
@@ -502,7 +515,7 @@ async function renderCompte(){if(!PIN)return;const j=await rpc('api_compte',{p_p
  const adm=j.role==='admin',dr=j.droits||{},ad=!!dr.administration,nbq=KEYS.filter(k=>dr[k]),Y='<span class="ok" aria-label="accessible">✔</span>',N='<span class="no" aria-label="non accessible">✘</span>',it=(ok,t)=>`<li>${ok?Y:N} ${t}</li>`;
  $('tree').innerHTML=it(1,'Accueil')+`<li>${Y} Mon compte<ul>${it(1,'Mes infos')+it(1,'Mes ventes')+it(1,'Accès')}</ul></li><li>${nbq.length?Y:N} Boutique<ul>${KEYS.map(k=>it(dr[k],esc(LBL[k]))).join('')}</ul></li><li>${dr.equipementier?Y:N} Équipementier<ul>${it(dr.equipementier,'Tableau de bord')+it(dr.equipementier,'CA Dauphin')+it(dr.equipementier,'Dotations')}</ul></li><li>${ad?Y:N} Administration<ul>${it(ad,'Utilisateurs')+it(ad,'Journal')+it(ad,'Paramètres')+it(ad,'Sauvegarde')}</ul></li>`;$('forcePin').hidden=!j.doit_changer_pin;
  MV=j.ventes||[];mvPage=1;$('mvT2').textContent='Mes ventes – saison '+j.saison;renderMesVentes();
- $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${adm?'Administrateur (accès complet)':'Utilisateur'}</td></tr><tr><td class="muted">Accès Boutique</td><td>${adm?'Tout':nbq.length?esc(nbq.map(k=>LBL[k]).join(', ')):'Aucun'}</td></tr><tr><td class="muted">Dernière connexion</td><td>${j.derniere_connexion?esc(new Date(j.derniere_connexion).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):'—'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
+ $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${adm?'Administrateur (accès complet)':'Utilisateur'}</td></tr><tr><td class="muted">Accès Boutique</td><td>${adm?'Tout':nbq.length?esc(nbq.map(k=>LBL[k]).join(', ')):'Aucun'}</td></tr>${dr.equipementier?'<tr><td class="muted">Équipementier</td><td>Oui</td></tr>':''}<tr><td class="muted">Administration</td><td>${ad?'Oui':'Non'}</td></tr><tr><td class="muted">Dernière connexion</td><td>${j.derniere_connexion?esc(new Date(j.derniere_connexion).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):'—'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
 $('pinOk').onclick=async()=>{const m=$('pinMsg'),o=$('pOld').value,n=$('pNew').value,n2=$('pNew2').value;m.className='warn';m.textContent='';
  if(!o||!n)return m.textContent='Remplis les trois cases.';if(!/^[0-9]{4}$/.test(n))return m.textContent='Le nouveau code doit faire exactement 4 chiffres.';if(n!==n2)return m.textContent='Les deux nouveaux codes ne sont pas identiques.';
  const b=$('pinOk');b.disabled=true;const j=await rpc('api_changer_pin',{p_pin:PIN,p_ancien:o,p_nouveau:n});b.disabled=false;
@@ -563,11 +576,11 @@ async function renderAdmin(v){if(!isAdm())return;if(!ADM||v!==renderAdmin.last){
  if(v==='adm-users')renderUsers();else if(v==='adm-sessions')renderSessions();else if(v==='adm-journal')renderJournal();else if(v==='adm-params')renderParams();else if(v==='adm-save')renderSave()}
 function renderUsers(){
  $('uT').innerHTML=ADM.utilisateurs.map(u=>{const etat=!u.actif?'<span class="tag">Désactivé</span>':u.bloque_jusqu?'<span class="tag t-r">Bloqué</span>':u.doit_changer_pin?'<span class="tag t-a">Code à choisir</span>':'<span class="tag t-o">Actif</span>';
-  return `<tr><td><b>${esc(u.nom)}</b></td><td>${esc(u.identifiant)}</td><td>${u.role==='admin'?'Administrateur':'Utilisateur'}</td><td>${u.role==='admin'?'Tout':(u.acces||[]).length?esc(u.acces.map(k=>LBL[k]||k).join(', ')):'<span class="muted">Aucun</span>'}</td><td>${etat}${u.sessions?` <span class="muted">${u.sessions} session(s)</span>`:''}</td><td>${fdt(u.derniere_connexion)}</td>
+  return `<tr><td><b>${esc(u.nom)}</b></td><td>${esc(u.identifiant)}</td><td>${u.role==='admin'?'Administrateur':'Utilisateur'}</td><td>${u.role==='admin'?'Boutique : tout'+((u.acces||[]).includes('equipementier')?' · Équipementier':''):(u.acces||[]).length?esc(u.acces.map(k=>LBL[k]||k).join(', ')):'<span class="muted">Aucun</span>'}</td><td>${etat}${u.sessions?` <span class="muted">${u.sessions} session(s)</span>`:''}</td><td>${fdt(u.derniere_connexion)}</td>
   <td><div class="acts"><button class="alt" type="button" data-ed="${u.id}">Modifier</button><button class="alt" type="button" data-pin="${u.id}">Code provisoire</button>${u.bloque_jusqu?`<button class="alt" type="button" data-unb="${u.id}">Débloquer</button>`:''}${u.sessions&&u.id!==ADM.moi?`<button class="alt" type="button" data-kill="${u.id}">Déconnecter</button>`:''}</div></td></tr>`}).join('')}
-const setAcc=l=>{for(const c of $('uAcc').querySelectorAll('input'))c.checked=l.includes(c.value)},getAcc=()=>[...$('uAcc').querySelectorAll('input:checked')].map(c=>c.value);
+const setAcc=l=>{for(const c of document.querySelectorAll('#uAcc input,#uEq input'))c.checked=l.includes(c.value)},setAccB=l=>{for(const c of $('uAcc').querySelectorAll('input'))c.checked=l.includes(c.value)},getAcc=()=>[...document.querySelectorAll('#uAcc input:checked,#uEq input:checked')].map(c=>c.value);
 const accRole=()=>{const a=$('uRole').value==='admin';for(const c of $('uAcc').querySelectorAll('input,button'))c.disabled=a;$('uAccNote').hidden=!a};$('uRole').onchange=accRole;
-$('uAcc').onclick=e=>{const p=e.target.dataset.preset;if(p!==undefined)setAcc(p?p.split(','):[])};
+$('uAcc').onclick=e=>{const p=e.target.dataset.preset;if(p!==undefined)setAccB(p?p.split(','):[])};
 function resetU(){editU=null;$('uTitle').textContent='Nouvel utilisateur';for(const i of ['uNom','uIdent','uPin'])$(i).value='';$('uRole').value='utilisateur';setAcc(['caisse']);accRole();$('uActif').checked=true;$('uPinBox').hidden=false;$('uMsg').textContent=''}
 $('uNew').onclick=resetU;
 $('uT').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=+(b.dataset.ed||b.dataset.pin||b.dataset.unb||b.dataset.kill||b.dataset.pok||0);const u=ADM.utilisateurs.find(x=>x.id===id);if(!u)return;
