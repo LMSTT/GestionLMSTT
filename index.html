@@ -53,7 +53,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 .tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}.t-r{background:var(--red);color:#fff}.t-a{background:#f0a400;color:#222}.t-o{background:light-dark(#e3f2e8,#1c3a28);color:var(--ok)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.row>*{flex:1 1 180px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:10px;font-weight:700;display:none;z-index:9;max-width:90vw}
-body.no-sai .need-sai,body.no-lec .need-lec,body.no-ges .need-ges,body.no-admin .need-admin{display:none!important}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}#who{font-size:14px;opacity:.9}button.out{color:#fff;border-color:#fff;min-height:36px;padding:6px 12px}
+body.no-caisse .need-caisse,body.no-stocks .need-stocks,body.no-ventes .need-ventes,body.no-ventes_annuler .need-ventes_annuler,body.no-entrees .need-entrees,body.no-bilan .need-bilan,body.no-catalogue .need-catalogue,body.no-pa .need-pa,body.no-admin .need-admin{display:none!important}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}#who{font-size:14px;opacity:.9}button.out{color:#fff;border-color:#fff;min-height:36px;padding:6px 12px}
 #login{position:fixed;inset:0;background:var(--blue);display:grid;place-items:center;padding:16px;z-index:20}#login form{width:min(380px,100%)}
 #venH th[data-k]{cursor:pointer;user-select:none;white-space:nowrap}#venH th[data-k]:hover{color:var(--blue)}#venH th[data-k]::after{content:attr(data-ar);color:var(--blue)}
 .mob{display:none}@media(max-width:600px){.mob{display:block}}
@@ -71,6 +71,7 @@ a.secteur{display:block;color:inherit;text-decoration:none;border:2px solid var(
 .warnbox{border:2px solid var(--red);background:light-dark(#fff3f3,#2a1416)}.chk{display:flex;gap:8px;align-items:center;font-weight:400;color:var(--ink);min-height:44px}.chk input{width:22px;height:22px;min-height:0}
 tr.ann td{opacity:.55;text-decoration:line-through}tr.ann td:last-child{opacity:1;text-decoration:none}.vl li.ann{opacity:.55}.vl li.ann .l1 b:last-child{text-decoration:line-through}
 .mot{min-height:36px;padding:6px 8px;font-size:14px;width:9em}.acts{display:flex;flex-wrap:wrap;gap:4px}.acts button{min-height:34px;padding:5px 9px;font-size:13px}
+.acc{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:14px 0 0}.acc legend{font-weight:700;color:var(--blue);padding:0 6px}.accg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:0 14px}.acc .row button{flex:0 1 auto;min-height:36px;padding:6px 12px;font-size:14px}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -81,7 +82,7 @@ pre,.scroll{overflow-x:auto}
 <header><div class="top"><a class="logo" href="https://lemanssarthetennisdetable.net/" target="_blank" rel="noopener" title="Site du Le Mans Sarthe Tennis de Table (nouvel onglet)"><img src="logo.png" alt="Logo Le Mans Sarthe Tennis de Table – ouvrir le site du club"></a><div class="ttl"><h1>Espace de Gestion LMSTT</h1></div><div class="usr"><span id="who"></span><button id="logout" class="alt out" type="button">Déconnexion</button></div></div>
 <nav id="nav"><a href="#accueil" data-g="accueil">Accueil</a><a href="#compte" data-g="compte">Mon compte</a><a href="#caisse" data-g="boutique" id="navBq">Boutique</a><a href="#adm-users" data-g="admin" class="need-admin">Administration</a></nav></header>
 <nav id="subC" class="subn" aria-label="Mon compte"><a href="#compte">Mes infos</a><a href="#mesventes">Mes ventes</a><a href="#acces">Accès</a></nav>
-<nav id="sub" class="subn" aria-label="Boutique"><a class="need-sai" href="#caisse">Caisse</a><a class="need-lec" href="#stocks">Stocks</a><a class="need-lec" href="#ventes">Ventes</a><a class="need-ges" href="#entrees">Entrées &amp; ajustements</a><a class="need-lec" href="#bilan">Bilan</a><a class="need-ges" href="#catalogue">Catalogue</a></nav>
+<nav id="sub" class="subn" aria-label="Boutique"><a class="need-caisse" href="#caisse">Caisse</a><a class="need-stocks" href="#stocks">Stocks</a><a class="need-ventes" href="#ventes">Ventes</a><a class="need-entrees" href="#entrees">Entrées &amp; ajustements</a><a class="need-bilan" href="#bilan">Bilan</a><a class="need-catalogue" href="#catalogue">Catalogue</a></nav>
 <nav id="subA" class="subn" aria-label="Administration"><a href="#adm-users">Utilisateurs</a><a href="#adm-journal">Journal</a><a href="#adm-params">Paramètres</a><a href="#adm-save">Sauvegarde</a></nav>
 <main>
 <p id="status"></p>
@@ -112,11 +113,11 @@ pre,.scroll{overflow-x:auto}
 <section id="stocks">
  <div class="kpis" id="stkKpi"></div>
  <div class="card"><div class="row"><div><label for="stkQ">Rechercher</label><input id="stkQ" placeholder="article, réf., catégorie"></div><div><label for="stkF">Afficher</label><select id="stkF"><option value="">Articles actifs</option><option value="alerte">En alerte / rupture</option><option value="tous">Tous (y compris inactifs)</option></select></div></div>
- <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Article</th><th>Catégorie</th><th class="n">Stock</th><th class="n">Seuil</th><th>État</th><th class="n need-lec">Valeur PA</th><th class="n">Prix vente</th></tr></thead><tbody id="stkT"></tbody></table></div></div>
+ <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Article</th><th>Catégorie</th><th class="n">Stock</th><th class="n">Seuil</th><th>État</th><th class="n need-pa">Valeur PA</th><th class="n">Prix vente</th></tr></thead><tbody id="stkT"></tbody></table></div></div>
 </section>
 
 <section id="ventes">
- <div class="card"><div class="row"><div><label for="venS">Saison</label><select id="venS" class="saisonSel"></select></div><div><label for="venQ">Rechercher</label><input id="venQ" placeholder="client, article, vendeur"></div><div class="mob"><label for="venTri">Trier par</label><select id="venTri"><option value="date|-1">Date (récent d'abord)</option><option value="date|1">Date (ancien d'abord)</option><option value="ach|1">Client (A→Z)</option><option value="lib|1">Article (A→Z)</option><option value="mt|-1">Montant (+ → −)</option><option value="mt|1">Montant (− → +)</option><option value="qte|-1">Quantité</option><option value="mode|1">Règlement</option><option value="user|1">Vendeur</option><option value="num|-1">N° de vente</option></select></div><button id="csv" class="alt need-lec" type="button" style="flex:0 1 auto">Exporter (Excel)</button></div>
+ <div class="card"><div class="row"><div><label for="venS">Saison</label><select id="venS" class="saisonSel"></select></div><div><label for="venQ">Rechercher</label><input id="venQ" placeholder="client, article, vendeur"></div><div class="mob"><label for="venTri">Trier par</label><select id="venTri"><option value="date|-1">Date (récent d'abord)</option><option value="date|1">Date (ancien d'abord)</option><option value="ach|1">Client (A→Z)</option><option value="lib|1">Article (A→Z)</option><option value="mt|-1">Montant (+ → −)</option><option value="mt|1">Montant (− → +)</option><option value="qte|-1">Quantité</option><option value="mode|1">Règlement</option><option value="user|1">Vendeur</option><option value="num|-1">N° de vente</option></select></div><button id="csv" class="alt need-ventes" type="button" style="flex:0 1 auto">Exporter (Excel)</button></div>
  <div class="scroll" style="margin-top:12px"><table class="stack"><thead id="venH"><tr><th data-k="date">Date</th><th data-k="num">N°</th><th data-k="ach">Client</th><th data-k="lib">Article</th><th class="n" data-k="qte">Qté</th><th class="n" data-k="mt">Montant</th><th data-k="mode">Règlement</th><th data-k="user">Vendeur</th><th></th></tr></thead><tbody id="venT"></tbody></table></div><nav id="venP" class="pager" aria-label="Pages des ventes"></nav></div>
 </section>
 
@@ -175,12 +176,12 @@ pre,.scroll{overflow-x:auto}
   <a class="card secteur" href="#caisse"><h3>🛒 Boutique</h3>
    <p>Vente des articles du club dans la vitrine du hall : raquettes, revêtements, balles, accessoires, textile et produits club.</p>
    <ul class="lst">
-    <li class="need-sai"><b>Caisse</b> : enregistrer une vente (client, articles, règlement), avec confirmation du dépôt des espèces / chèques ou de l'encaissement CB.</li>
-    <li class="need-lec"><b>Stocks</b> : quantités en vitrine et alertes de rupture.</li>
-    <li class="need-lec"><b>Ventes</b> : historique par saison, tri, recherche, annulation et export Excel.</li>
-    <li class="need-ges"><b>Entrées &amp; ajustements</b> : réceptions de commande et corrections d'inventaire.</li>
-    <li class="need-lec"><b>Bilan</b> : chiffre d'affaires, marge et meilleures ventes de la saison (1er août – 31 juillet).</li>
-    <li class="need-ges"><b>Catalogue</b> : articles, prix et seuils d'alerte.</li></ul>
+    <li class="need-caisse"><b>Caisse</b> : enregistrer une vente (client, articles, règlement), avec confirmation du dépôt des espèces / chèques ou de l'encaissement CB.</li>
+    <li class="need-stocks"><b>Stocks</b> : quantités en vitrine et alertes de rupture.</li>
+    <li class="need-ventes"><b>Ventes</b> : historique par saison, tri, recherche, annulation et export Excel.</li>
+    <li class="need-entrees"><b>Entrées &amp; ajustements</b> : réceptions de commande et corrections d'inventaire.</li>
+    <li class="need-bilan"><b>Bilan</b> : chiffre d'affaires, marge et meilleures ventes de la saison (1er août – 31 juillet).</li>
+    <li class="need-catalogue"><b>Catalogue</b> : articles, prix et seuils d'alerte.</li></ul>
    <span class="go">Ouvrir la boutique ›</span></a>
   <div class="card soon"><h3>Prochains secteurs</h3><p class="muted">D'autres secteurs de gestion du club pourront être ajoutés ici au fil du temps.</p></div>
  </div>
@@ -211,10 +212,23 @@ pre,.scroll{overflow-x:auto}
    <div><label for="uNom">Nom affiché</label><input id="uNom" placeholder="ex. Adeline"></div>
    <div><label for="uIdent">Identifiant</label><input id="uIdent" autocapitalize="off" placeholder="ex. adeline"></div>
    <div><label for="uRole">Profil</label><select id="uRole"><option value="utilisateur">Utilisateur</option><option value="admin">Administrateur (accès complet)</option></select></div>
-   <div><label for="uBq">Boutique</label><select id="uBq"><option value="aucun">Aucun accès</option><option value="saisie">Saisie (caisse)</option><option value="lecture">Consultation (stocks, ventes, bilan)</option><option value="gestion">Gestion complète</option></select></div>
+   
    <div id="uPinBox"><label for="uPin">Code provisoire (4 chiffres)</label><input id="uPin" inputmode="numeric" maxlength="4" placeholder="à changer à la 1re connexion"></div>
    <div><label>&nbsp;</label><label class="chk"><input type="checkbox" id="uActif" checked> Compte actif</label></div>
   </div>
+  <fieldset class="acc" id="uAcc"><legend>Accès Boutique (sous-menus)</legend>
+   <div class="accg">
+    <label class="chk"><input type="checkbox" value="caisse"> Caisse <span class="muted">– vendre</span></label>
+    <label class="chk"><input type="checkbox" value="stocks"> Stocks <span class="muted">– consulter</span></label>
+    <label class="chk"><input type="checkbox" value="ventes"> Ventes <span class="muted">– consulter, exporter</span></label>
+    <label class="chk"><input type="checkbox" value="ventes_annuler"> Annuler des ventes</label>
+    <label class="chk"><input type="checkbox" value="entrees"> Entrées &amp; ajustements</label>
+    <label class="chk"><input type="checkbox" value="bilan"> Bilan</label>
+    <label class="chk"><input type="checkbox" value="catalogue"> Catalogue <span class="muted">– articles, prix</span></label>
+   </div>
+   <div class="row" style="margin-top:6px"><button type="button" class="alt" data-preset="caisse">Vendeur</button><button type="button" class="alt" data-preset="stocks,ventes,bilan">Consultation</button><button type="button" class="alt" data-preset="caisse,stocks,ventes,ventes_annuler,entrees,bilan,catalogue">Tout</button><button type="button" class="alt" data-preset="">Aucun</button></div>
+   <p class="muted" id="uAccNote">Un administrateur a automatiquement accès à tout.</p>
+  </fieldset>
   <p id="uMsg" class="warn"></p>
   <div class="row"><button id="uOk" type="button">Enregistrer</button><button id="uNew" class="alt" type="button">Nouveau</button></div></div>
  <div class="card"><h2>Utilisateurs</h2><div class="scroll"><table class="stack"><thead><tr><th>Nom</th><th>Identifiant</th><th>Profil</th><th>Boutique</th><th>État</th><th>Dernière connexion</th><th>Actions</th></tr></thead><tbody id="uT"></tbody></table></div></div>
@@ -279,10 +293,11 @@ const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</op
 
 /* ---------- navigation ---------- */
 const views=['accueil','mesventes','acces','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
-let DR={boutique:'aucun',administration:'aucun'},MUST=false,READY=false;
-const bqSai=()=>['saisie','gestion'].includes(DR.boutique),bqLec=()=>['lecture','gestion'].includes(DR.boutique),bqGes=()=>DR.boutique==='gestion',isAdm=()=>DR.administration==='gestion';
+const KEYS=['caisse','stocks','ventes','ventes_annuler','entrees','bilan','catalogue'],LBL={caisse:'Caisse',stocks:'Stocks',ventes:'Ventes',ventes_annuler:'Annuler des ventes',entrees:'Entrées & ajustements',bilan:'Bilan',catalogue:'Catalogue'};
+let DR={},MUST=false,READY=false;
+const isAdm=()=>!!DR.administration;
 function allowed(v){if(['accueil','compte','mesventes','acces'].includes(v))return !MUST||v==='compte';if(MUST)return false;
- if(v==='caisse')return bqSai();if(['stocks','ventes','bilan'].includes(v))return bqLec();if(['entrees','catalogue'].includes(v))return bqGes();if(v.startsWith('adm-'))return isAdm();return false}
+ if(['caisse','stocks','ventes','entrees','bilan','catalogue'].includes(v))return !!DR[v];if(v.startsWith('adm-'))return isAdm();return false}
 function route(){let v=views.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
  if(READY&&!allowed(v)){location.hash=MUST?'compte':'accueil';return}for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='accueil'?'accueil':['compte','mesventes','acces'].includes(v)?'compte':v.startsWith('adm-')?'admin':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';for(const a of $('subC').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subC').hidden=g!=='compte';for(const a of $('subA').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subA').hidden=g!=='admin';render()}
 addEventListener('hashchange',route);
@@ -319,10 +334,10 @@ function renderStocks(){
  const q=$('stkQ').value.toLowerCase(),f=$('stkF').value;let nb=0,vpa=0,vpv=0,al=0;
  const rows=S.cat.map(c=>({c,s:stockOf(c.ref)})).sort((a,b)=>a.c.cat.localeCompare(b.c.cat)||label(a.c).localeCompare(label(b.c)));
  for(const {c,s} of rows)if(c.statut!=='Inactif'){nb+=s;vpa+=s*c.pa;vpv+=s*c.pv;if(s<=0||(c.seuil&&s<=c.seuil))al++}
- $('stkKpi').innerHTML=`<div class="kpi"><span>Pièces en stock</span><b>${nb}</b></div><div class="kpi need-lec"><span>Valeur au prix d'achat</span><b>${eur(vpa)}</b></div><div class="kpi"><span>Valeur au prix de vente</span><b>${eur(vpv)}</b></div><div class="kpi"><span>Articles en alerte / rupture</span><b style="color:var(--red)">${al}</b></div>`;
+ $('stkKpi').innerHTML=`<div class="kpi"><span>Pièces en stock</span><b>${nb}</b></div><div class="kpi need-pa"><span>Valeur au prix d'achat</span><b>${eur(vpa)}</b></div><div class="kpi"><span>Valeur au prix de vente</span><b>${eur(vpv)}</b></div><div class="kpi"><span>Articles en alerte / rupture</span><b style="color:var(--red)">${al}</b></div>`;
  $('stkT').innerHTML=rows.filter(({c,s})=>(f==='tous'||c.statut!=='Inactif')&&(f!=='alerte'||s<=0||(c.seuil&&s<=c.seuil))&&(!q||(label(c)+c.ref+c.cat).toLowerCase().includes(q))).map(({c,s})=>{
   const t=s<=0?'<span class="tag t-r">Rupture</span>':c.seuil&&s<=c.seuil?'<span class="tag t-a">Alerte</span>':'<span class="tag t-o">OK</span>';
-  return `<tr><td><b>${esc(label(c))}</b><br><span class="muted">${esc(c.ref)}</span></td><td>${esc(c.cat)}</td><td class="n"><b>${s}</b></td><td class="n">${c.seuil||'–'}</td><td>${c.statut==='Inactif'?'<span class="tag">Inactif</span>':t}</td><td class="n need-lec">${eur(s*c.pa)}</td><td class="n">${eur(c.pv)}</td></tr>`}).join('')||'<tr><td colspan="7" class="muted">Aucun article.</td></tr>';
+  return `<tr><td><b>${esc(label(c))}</b><br><span class="muted">${esc(c.ref)}</span></td><td>${esc(c.cat)}</td><td class="n"><b>${s}</b></td><td class="n">${c.seuil||'–'}</td><td>${c.statut==='Inactif'?'<span class="tag">Inactif</span>':t}</td><td class="n need-pa">${eur(s*c.pa)}</td><td class="n">${eur(c.pv)}</td></tr>`}).join('')||'<tr><td colspan="7" class="muted">Aucun article.</td></tr>';
 }
 let vSort={k:'date',d:-1},vPage=1;const PP=10;
 function renderVentes(){
@@ -331,11 +346,11 @@ function renderVentes(){
  for(const th of $('venH').querySelectorAll('th[data-k]')){const on=th.dataset.k===vSort.k;th.setAttribute('aria-sort',on?(vSort.d>0?'ascending':'descending'):'none');th.dataset.ar=on?(vSort.d>0?' ▲':' ▼'):''}
  const nbP=Math.max(1,Math.ceil(L.length/PP));if(vPage>nbP)vPage=nbP;
  $('venP').innerHTML=nbP>1?`<button type="button" data-p="${vPage-1}" ${vPage===1?'disabled':''} aria-label="Page précédente">‹</button>`+Array.from({length:nbP},(_,i)=>i+1).map(i=>`<button type="button" data-p="${i}"${i===vPage?' class="on" aria-current="page"':''}>${i}</button>`).join('')+`<button type="button" data-p="${vPage+1}" ${vPage===nbP?'disabled':''} aria-label="Page suivante">›</button><span class="muted">${L.length} ventes</span>`:'';
- $('venT').innerHTML=L.slice((vPage-1)*PP,vPage*PP).map(v=>`<tr${v.ann?' class="ann"':''}><td style="white-space:nowrap">${fdate(v.date)}${v.heure?' · '+esc(v.heure):''}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${lblMode(v.mode)}</td><td>${esc(v.user)}</td><td>${v.ann?`<span class="tag t-r" title="${esc(v.motifAnn)}">Annulée</span><br><span class="muted">${esc(v.motifAnn)} · ${esc(v.annPar)}</span>`:`<button class="del need-ges" data-delv="${esc(v.num)}" type="button">Annuler</button>`}</td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
+ $('venT').innerHTML=L.slice((vPage-1)*PP,vPage*PP).map(v=>`<tr${v.ann?' class="ann"':''}><td style="white-space:nowrap">${fdate(v.date)}${v.heure?' · '+esc(v.heure):''}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${lblMode(v.mode)}</td><td>${esc(v.user)}</td><td>${v.ann?`<span class="tag t-r" title="${esc(v.motifAnn)}">Annulée</span><br><span class="muted">${esc(v.motifAnn)} · ${esc(v.annPar)}</span>`:`<button class="del need-ventes_annuler" data-delv="${esc(v.num)}" type="button">Annuler</button>`}</td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
 }
 function renderMv(){
  const L=[...S.appros.map(a=>({...a,t:'Entrée',k:'entree',d:`${a.four} · ${a.cde} · ${eur(a.pa)} /u`})),...S.ajust.map(j=>({...j,t:'Ajustement',k:'ajustement',d:j.motif+(j.com?' · '+j.com:'')}))].sort((a,b)=>b.date.localeCompare(a.date));
- $('mvT').innerHTML=L.slice(0,150).map(m=>{const c=byRef(m.ref);return `<tr><td>${fdate(m.date)}</td><td>${m.t}</td><td>${esc(c?label(c):m.ref)}</td><td class="n">${m.qte>0?'+':''}${m.qte}</td><td>${esc(m.d)}</td><td>${esc(m.user)}</td><td><button class="del need-ges" type="button" data-delm="${m.k}/${esc(m.id)}">Suppr.</button></td></tr>`}).join('');
+ $('mvT').innerHTML=L.slice(0,150).map(m=>{const c=byRef(m.ref);return `<tr><td>${fdate(m.date)}</td><td>${m.t}</td><td>${esc(c?label(c):m.ref)}</td><td class="n">${m.qte>0?'+':''}${m.qte}</td><td>${esc(m.d)}</td><td>${esc(m.user)}</td><td><button class="del need-entrees" type="button" data-delm="${m.k}/${esc(m.id)}">Suppr.</button></td></tr>`}).join('');
 }
 function bars(el,data,fmt){const mx=Math.max(1,...data.map(d=>d[1]));el.innerHTML=data.length?data.map(([k,v,x])=>`<div class="bar"><span>${esc(k)}</span><i style="width:${v/mx*100}%"></i><b>${fmt(v)}${x?` <span class="muted">${esc(x)}</span>`:''}</b></div>`).join(''):'<p class="muted">Pas encore de ventes.</p>'}
 function renderBilan(){
@@ -381,9 +396,9 @@ function apply(j){
  S.ajust=j.ajustements.map(a=>({id:a.id,date:a.date,ref:a.ref,qte:a.quantite,motif:a.motif,com:a.commentaire,user:a.saisi_par}));
  const P=j.parametres||{};S.params={users:P.vendeurs||[],cats:P.categories||[],fours:P.fournisseurs||[],motifs:P.motifs||[],modes:P.modes||['Espèces','Carte bancaire']};
  ROLE=j.role;DR=j.droits||DR;MUST=!!j.doit_changer_pin;READY=true;$('vNom').textContent=j.nom;
- const B=document.body.classList;B.toggle('no-sai',!bqSai());B.toggle('no-lec',!bqLec());B.toggle('no-ges',!bqGes());B.toggle('no-admin',!isAdm());B.toggle('must',MUST);
- const first=['caisse','stocks','ventes','bilan'].find(allowed);$('navBq').hidden=!first||MUST;if(first)$('navBq').setAttribute('href','#'+first);
- $('who').textContent=j.nom+' · '+(ROLE==='admin'?'admin':({saisie:'vendeur',lecture:'consultation',gestion:'gestion boutique'}[DR.boutique]||'utilisateur'));
+ const B=document.body.classList;for(const k of KEYS)B.toggle('no-'+k,!DR[k]);B.toggle('no-pa',!(DR.stocks||DR.entrees||DR.bilan||DR.catalogue));B.toggle('no-admin',!isAdm());B.toggle('must',MUST);
+ const first=['caisse','stocks','ventes','bilan','entrees','catalogue'].find(allowed);$('navBq').hidden=!first||MUST;if(first)$('navBq').setAttribute('href','#'+first);
+ $('who').textContent=j.nom+' · '+(ROLE==='admin'?'admin':DR.caisse&&!DR.stocks&&!DR.ventes?'vendeur':'utilisateur');
  if(!allowed(location.hash.slice(1)||'accueil')){location.hash=MUST?'compte':'accueil'}else route();
  st.textContent=MUST?'Choisis ton code PIN personnel pour continuer.':'À jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}
 async function load(){if(!PIN)return false;const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok){st.textContent=(j&&j.erreur)||'Erreur';if(j&&j.code==='session')logout(j.erreur);return false}apply(j);return true}
@@ -397,10 +412,10 @@ function renderMesVentes(){const n=Math.max(1,Math.ceil(MV.length/10));if(mvPage
 async function renderCompte(){if(!PIN)return;const j=await rpc('api_compte',{p_pin:PIN});if(!j||!j.ok)return;
  $('cptKpi').innerHTML=`<div class="kpi"><span>Mes ventes aujourd'hui</span><b>${eur(j.montant_jour)}</b><span>${j.nb_jour} ligne(s)</span></div><div class="kpi"><span>Mes ventes saison ${esc(j.saison)}</span><b>${eur(j.montant)}</b><span>${j.nb_ventes} ligne(s)</span></div>`;
  const d=j.derniere?esc(fdate(j.derniere.slice(0,10)))+' '+esc(j.derniere.slice(11)):'—';
- const adm=j.role==='admin',bq=(j.droits||{}).boutique||'aucun',ad=(j.droits||{}).administration==='gestion',sai=['saisie','gestion'].includes(bq),lec=['lecture','gestion'].includes(bq),ges=bq==='gestion',Y='<span class="ok" aria-label="accessible">✔</span>',N='<span class="no" aria-label="non accessible">✘</span>',it=(ok,t)=>`<li>${ok?Y:N} ${t}</li>`;
- $('tree').innerHTML=it(1,'Accueil')+`<li>${Y} Mon compte<ul>${it(1,'Mes infos')+it(1,'Mes ventes')+it(1,'Accès')}</ul></li><li>${bq!=='aucun'?Y:N} Boutique <span class="muted">(${({aucun:'aucun accès',saisie:'saisie',lecture:'consultation',gestion:'gestion complète'})[bq]})</span><ul>${it(sai,'Caisse')+it(lec,'Stocks')+it(lec,'Ventes')+it(ges,'Entrées &amp; ajustements')+it(lec,'Bilan')+it(ges,'Catalogue')}</ul></li><li>${ad?Y:N} Administration<ul>${it(ad,'Utilisateurs')+it(ad,'Journal')+it(ad,'Paramètres')+it(ad,'Sauvegarde')}</ul></li>`;$('forcePin').hidden=!j.doit_changer_pin;
+ const adm=j.role==='admin',dr=j.droits||{},ad=!!dr.administration,nbq=KEYS.filter(k=>dr[k]),Y='<span class="ok" aria-label="accessible">✔</span>',N='<span class="no" aria-label="non accessible">✘</span>',it=(ok,t)=>`<li>${ok?Y:N} ${t}</li>`;
+ $('tree').innerHTML=it(1,'Accueil')+`<li>${Y} Mon compte<ul>${it(1,'Mes infos')+it(1,'Mes ventes')+it(1,'Accès')}</ul></li><li>${nbq.length?Y:N} Boutique<ul>${KEYS.map(k=>it(dr[k],esc(LBL[k]))).join('')}</ul></li><li>${ad?Y:N} Administration<ul>${it(ad,'Utilisateurs')+it(ad,'Journal')+it(ad,'Paramètres')+it(ad,'Sauvegarde')}</ul></li>`;$('forcePin').hidden=!j.doit_changer_pin;
  MV=j.ventes||[];mvPage=1;$('mvT2').textContent='Mes ventes – saison '+j.saison;renderMesVentes();
- $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${adm?'Administrateur (accès complet)':'Utilisateur'}</td></tr><tr><td class="muted">Niveau d'accès Boutique</td><td>${({aucun:'Aucun',saisie:'Saisie (caisse)',lecture:'Consultation',gestion:'Gestion complète'})[bq]}</td></tr><tr><td class="muted">Dernière connexion</td><td>${j.derniere_connexion?esc(new Date(j.derniere_connexion).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):'—'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
+ $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${adm?'Administrateur (accès complet)':'Utilisateur'}</td></tr><tr><td class="muted">Accès Boutique</td><td>${adm?'Tout':nbq.length?esc(nbq.map(k=>LBL[k]).join(', ')):'Aucun'}</td></tr><tr><td class="muted">Dernière connexion</td><td>${j.derniere_connexion?esc(new Date(j.derniere_connexion).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):'—'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
 $('pinOk').onclick=async()=>{const m=$('pinMsg'),o=$('pOld').value,n=$('pNew').value,n2=$('pNew2').value;m.className='warn';m.textContent='';
  if(!o||!n)return m.textContent='Remplis les trois cases.';if(!/^[0-9]{4}$/.test(n))return m.textContent='Le nouveau code doit faire exactement 4 chiffres.';if(n!==n2)return m.textContent='Les deux nouveaux codes ne sont pas identiques.';
  const b=$('pinOk');b.disabled=true;const j=await rpc('api_changer_pin',{p_pin:PIN,p_ancien:o,p_nouveau:n});b.disabled=false;
@@ -461,19 +476,22 @@ async function renderAdmin(v){if(!isAdm())return;if(!ADM||v!==renderAdmin.last){
  if(v==='adm-users')renderUsers();else if(v==='adm-journal')renderJournal();else if(v==='adm-params')renderParams();else if(v==='adm-save')renderSave()}
 function renderUsers(){
  $('uT').innerHTML=ADM.utilisateurs.map(u=>{const etat=!u.actif?'<span class="tag">Désactivé</span>':u.bloque_jusqu?'<span class="tag t-r">Bloqué</span>':u.doit_changer_pin?'<span class="tag t-a">Code à choisir</span>':'<span class="tag t-o">Actif</span>';
-  return `<tr><td><b>${esc(u.nom)}</b></td><td>${esc(u.identifiant)}</td><td>${u.role==='admin'?'Administrateur':'Utilisateur'}</td><td>${u.role==='admin'?'Gestion':NIV[(u.droits||{}).boutique||'aucun']}</td><td>${etat}${u.sessions?` <span class="muted">${u.sessions} session(s)</span>`:''}</td><td>${fdt(u.derniere_connexion)}</td>
+  return `<tr><td><b>${esc(u.nom)}</b></td><td>${esc(u.identifiant)}</td><td>${u.role==='admin'?'Administrateur':'Utilisateur'}</td><td>${u.role==='admin'?'Tout':(u.acces||[]).length?esc(u.acces.map(k=>LBL[k]||k).join(', ')):'<span class="muted">Aucun</span>'}</td><td>${etat}${u.sessions?` <span class="muted">${u.sessions} session(s)</span>`:''}</td><td>${fdt(u.derniere_connexion)}</td>
   <td><div class="acts"><button class="alt" type="button" data-ed="${u.id}">Modifier</button><button class="alt" type="button" data-pin="${u.id}">Code provisoire</button>${u.bloque_jusqu?`<button class="alt" type="button" data-unb="${u.id}">Débloquer</button>`:''}${u.sessions&&u.id!==ADM.moi?`<button class="alt" type="button" data-kill="${u.id}">Déconnecter</button>`:''}</div></td></tr>`}).join('')}
-function resetU(){editU=null;$('uTitle').textContent='Nouvel utilisateur';for(const i of ['uNom','uIdent','uPin'])$(i).value='';$('uIdent').disabled=false;$('uRole').value='utilisateur';$('uBq').value='saisie';$('uActif').checked=true;$('uPinBox').hidden=false;$('uMsg').textContent=''}
+const setAcc=l=>{for(const c of $('uAcc').querySelectorAll('input'))c.checked=l.includes(c.value)},getAcc=()=>[...$('uAcc').querySelectorAll('input:checked')].map(c=>c.value);
+const accRole=()=>{const a=$('uRole').value==='admin';for(const c of $('uAcc').querySelectorAll('input,button'))c.disabled=a;$('uAccNote').hidden=!a};$('uRole').onchange=accRole;
+$('uAcc').onclick=e=>{const p=e.target.dataset.preset;if(p!==undefined)setAcc(p?p.split(','):[])};
+function resetU(){editU=null;$('uTitle').textContent='Nouvel utilisateur';for(const i of ['uNom','uIdent','uPin'])$(i).value='';$('uRole').value='utilisateur';setAcc(['caisse']);accRole();$('uActif').checked=true;$('uPinBox').hidden=false;$('uMsg').textContent=''}
 $('uNew').onclick=resetU;
 $('uT').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=+(b.dataset.ed||b.dataset.pin||b.dataset.unb||b.dataset.kill||b.dataset.pok||0);const u=ADM.utilisateurs.find(x=>x.id===id);if(!u)return;
- if(b.dataset.ed){editU=u;$('uTitle').textContent='Modifier : '+u.nom;$('uNom').value=u.nom;$('uIdent').value=u.identifiant;$('uIdent').disabled=true;$('uRole').value=u.role;$('uBq').value=(u.droits||{}).boutique||'aucun';$('uActif').checked=u.actif;$('uPinBox').hidden=true;$('uMsg').textContent='';scrollTo({top:0,behavior:'smooth'})}
+ if(b.dataset.ed){editU=u;$('uTitle').textContent='Modifier : '+u.nom;$('uNom').value=u.nom;$('uIdent').value=u.identifiant;$('uRole').value=u.role;setAcc(u.acces||[]);accRole();$('uActif').checked=u.actif;$('uPinBox').hidden=true;$('uMsg').textContent='';scrollTo({top:0,behavior:'smooth'})}
  else if(b.dataset.pin){b.parentElement.innerHTML=`<input class="mot" inputmode="numeric" maxlength="4" placeholder="4 chiffres" aria-label="Code provisoire"> <button type="button" data-pok="${id}">Valider</button>`}
  else if(b.dataset.pok){const v=b.parentElement.querySelector('.mot').value.trim();if(!/^[0-9]{4}$/.test(v))return toast('4 chiffres');const j=await rpc('api_admin_reset_pin',{p_pin:PIN,p_id:id,p_nouveau:v});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');toast('Code provisoire enregistré : '+u.nom+' devra le changer à la connexion');await loadAdmin();renderUsers()}
- else if(b.dataset.unb){const j=await rpc('api_admin_utilisateur',{p_pin:PIN,p:{id,nom:u.nom,role:u.role,actif:u.actif,debloquer:true}});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');toast(u.nom+' débloqué');await loadAdmin();renderUsers()}
+ else if(b.dataset.unb){const j=await rpc('api_admin_utilisateur',{p_pin:PIN,p:{id,nom:u.nom,identifiant:u.identifiant,role:u.role,actif:u.actif,debloquer:true}});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');toast(u.nom+' débloqué');await loadAdmin();renderUsers()}
  else if(b.dataset.kill){const j=await rpc('api_admin_fermer_sessions',{p_pin:PIN,p_id:id});if(!j||!j.ok)return toast((j&&j.erreur)||'Erreur');toast(u.nom+' déconnecté de '+j.sessions+' appareil(s)');await loadAdmin();renderUsers()}};
 $('uT').addEventListener('click',e=>{if(e.target.classList.contains('mot'))e.stopPropagation()},true);
-$('uOk').onclick=async()=>{const m=$('uMsg');m.textContent='';const p={nom:$('uNom').value.trim(),role:$('uRole').value,actif:$('uActif').checked,droits:{boutique:$('uBq').value}};
- if(editU)p.id=editU.id;else{p.identifiant=$('uIdent').value.trim().toLowerCase();p.pin=$('uPin').value.trim();if(!/^[0-9]{4}$/.test(p.pin))return m.textContent='Code provisoire : 4 chiffres.'}
+$('uOk').onclick=async()=>{const m=$('uMsg');m.textContent='';const p={nom:$('uNom').value.trim(),identifiant:$('uIdent').value.trim().toLowerCase(),role:$('uRole').value,actif:$('uActif').checked,acces:getAcc()};
+ if(editU)p.id=editU.id;else{p.pin=$('uPin').value.trim();if(!/^[0-9]{4}$/.test(p.pin))return m.textContent='Code provisoire : 4 chiffres.'}
  const j=await rpc('api_admin_utilisateur',{p_pin:PIN,p});if(!j||!j.ok)return m.textContent=(j&&j.erreur)||'Erreur';
  toast(editU?'Utilisateur modifié ✓':'Utilisateur créé ✓ Il choisira son code à la 1re connexion');resetU();await loadAdmin();renderUsers();loadIdents()};
 function renderJournal(){const q=$('jrQ').value.toLowerCase(),L=ADM.journal.filter(x=>!q||(x.nom+' '+x.action+' '+x.cible+' '+JSON.stringify(x.details)).toLowerCase().includes(q)),n=Math.max(1,Math.ceil(L.length/20));if(jrPage>n)jrPage=n;
