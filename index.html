@@ -53,6 +53,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 .top{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:10px}.ttl{text-align:center}.ttl p{margin:2px 0 0}.logo{justify-self:start;background:#fff;border-radius:10px;padding:6px;line-height:0}.logo img{height:clamp(44px,8vw,64px);width:auto}.usr{justify-self:end}
 @media(max-width:600px){.top{grid-template-columns:auto 1fr auto}.ttl p{display:none}}
 .pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}.pager button{min-width:44px;padding:8px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--line)}.pager button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.pager .muted{margin-left:auto}
+.sm{display:none}@media(max-width:600px){.lg{display:none}.sm{display:inline}}
 #status{font-size:13px;margin:0 0 12px;color:var(--mute)}
 .muted{color:var(--mute);font-size:14px}
 pre,.scroll{overflow-x:auto}
@@ -162,6 +163,7 @@ pre,.scroll{overflow-x:auto}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const eur=n=>(Number(n)||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
+const lblMode=m=>m==='Carte bancaire'?'<span class="lg">Carte bancaire</span><span class="sm">CB</span>':esc(m);
 const nowHM=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const fdate=s=>s?s.split('-').reverse().join('/'):'';
@@ -184,7 +186,7 @@ addEventListener('hashchange',route);
 /* ---------- rendu ---------- */
 function fillSelects(){
  const P=S.params,act=S.cat.filter(c=>c.statut!=='Inactif').sort((a,b)=>label(a).localeCompare(label(b)));
- if(P.modes){if(!P.modes.includes(mode))mode=P.modes.includes('Carte bancaire')?'Carte bancaire':P.modes[0];$('vMode').innerHTML=P.modes.map(m=>`<button type="button" data-m="${esc(m)}"${m===mode?' class="on"':''}>${esc(m)}</button>`).join('')}
+ if(P.modes){if(!P.modes.includes(mode))mode=P.modes.includes('Carte bancaire')?'Carte bancaire':P.modes[0];$('vMode').innerHTML=P.modes.map(m=>`<button type="button" data-m="${esc(m)}"${m===mode?' class="on"':''}>${lblMode(m)}</button>`).join('')}
  for(const id of ['vUser','aUser','jUser']){const e=$(id),v=e.value;e.innerHTML=opts(P.users,v||P.users[0])}
  const ao=act.map(c=>`<option value="${esc(c.ref)}">${esc(label(c))}</option>`).join('');
  for(const e of document.querySelectorAll('.artSel')){const v=e.value;e.innerHTML='<option value="">— choisir —</option>'+ao;e.value=v}
@@ -225,7 +227,7 @@ function renderVentes(){
  for(const th of $('venH').querySelectorAll('th[data-k]')){const on=th.dataset.k===vSort.k;th.setAttribute('aria-sort',on?(vSort.d>0?'ascending':'descending'):'none');th.dataset.ar=on?(vSort.d>0?' ▲':' ▼'):''}
  const nbP=Math.max(1,Math.ceil(L.length/PP));if(vPage>nbP)vPage=nbP;
  $('venP').innerHTML=nbP>1?`<button type="button" data-p="${vPage-1}" ${vPage===1?'disabled':''} aria-label="Page précédente">‹</button>`+Array.from({length:nbP},(_,i)=>i+1).map(i=>`<button type="button" data-p="${i}"${i===vPage?' class="on" aria-current="page"':''}>${i}</button>`).join('')+`<button type="button" data-p="${vPage+1}" ${vPage===nbP?'disabled':''} aria-label="Page suivante">›</button><span class="muted">${L.length} ventes</span>`:'';
- $('venT').innerHTML=L.slice((vPage-1)*PP,vPage*PP).map(v=>`<tr><td style="white-space:nowrap">${fdate(v.date)}${v.heure?' · '+esc(v.heure):''}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${esc(v.mode)}</td><td>${esc(v.user)}</td><td><button class="del adm" data-delv="${esc(v.num)}" type="button">Annuler</button></td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
+ $('venT').innerHTML=L.slice((vPage-1)*PP,vPage*PP).map(v=>`<tr><td style="white-space:nowrap">${fdate(v.date)}${v.heure?' · '+esc(v.heure):''}</td><td>${esc(v.num)}</td><td>${esc(v.ach)}</td><td>${esc(v.lib)}${v.com?`<br><span class="muted">${esc(v.com)}</span>`:''}</td><td class="n">${v.qte}</td><td class="n">${eur(v.mt)}</td><td>${lblMode(v.mode)}</td><td>${esc(v.user)}</td><td><button class="del adm" data-delv="${esc(v.num)}" type="button">Annuler</button></td></tr>`).join('')||'<tr><td colspan="9" class="muted">Aucune vente sur cette saison.</td></tr>';
 }
 function renderMv(){
  const L=[...S.appros.map(a=>({...a,t:'Entrée',k:'entree',d:`${a.four} · ${a.cde} · ${eur(a.pa)} /u`})),...S.ajust.map(j=>({...j,t:'Ajustement',k:'ajustement',d:j.motif+(j.com?' · '+j.com:'')}))].sort((a,b)=>b.date.localeCompare(a.date));
