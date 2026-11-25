@@ -140,10 +140,10 @@ pre,.scroll{overflow-x:auto}
  <div class="card"><h2>Changer mon code PIN</h2>
   <form id="pinF" class="grid" autocomplete="off">
    <div><label for="pOld">Code actuel</label><input id="pOld" type="password" required></div>
-   <div><label for="pNew">Nouveau code (4 caractères min.)</label><input id="pNew" type="password" minlength="4" required></div>
-   <div><label for="pNew2">Confirme le nouveau code</label><input id="pNew2" type="password" minlength="4" required></div>
+   <div><label for="pNew">Nouveau code (4 chiffres)</label><input id="pNew" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></div>
+   <div><label for="pNew2">Confirme le nouveau code</label><input id="pNew2" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></div>
   </form>
-  <p class="muted">Le code tient compte des majuscules. Ne le communique à personne.</p>
+  <p class="muted">Choisis 4 chiffres faciles à retenir pour toi, mais évite 1234, 0000 ou ta date de naissance. Ne le communique à personne.</p>
   <p id="pinMsg" class="warn"></p>
   <button id="pinOk" type="button">Changer mon code</button></div>
 </section>
@@ -301,7 +301,7 @@ async function renderCompte(){if(!PIN)return;const j=await rpc('api_compte',{p_p
  const d=j.derniere?esc(fdate(j.derniere.slice(0,10)))+' '+esc(j.derniere.slice(11)):'—';
  $('cptInfo').innerHTML=`<tr><td class="muted">Nom</td><td><b>${esc(j.nom)}</b></td></tr><tr><td class="muted">Identifiant</td><td>${esc(j.identifiant)}</td></tr><tr><td class="muted">Profil</td><td>${j.role==='admin'?'Administrateur (accès complet)':'Vendeur (caisse)'}</td></tr><tr><td class="muted">Dernière vente</td><td>${d}</td></tr>`}
 $('pinOk').onclick=async()=>{const m=$('pinMsg'),o=$('pOld').value,n=$('pNew').value,n2=$('pNew2').value;m.className='warn';m.textContent='';
- if(!o||!n)return m.textContent='Remplis les trois cases.';if(n.length<4)return m.textContent='Le nouveau code doit faire au moins 4 caractères.';if(n!==n2)return m.textContent='Les deux nouveaux codes ne sont pas identiques.';
+ if(!o||!n)return m.textContent='Remplis les trois cases.';if(!/^[0-9]{4}$/.test(n))return m.textContent='Le nouveau code doit faire exactement 4 chiffres.';if(n!==n2)return m.textContent='Les deux nouveaux codes ne sont pas identiques.';
  const ident=PIN.split('\n')[0],b=$('pinOk');b.disabled=true;const j=await rpc('api_changer_pin',{p_pin:ident+'\n'+o,p_nouveau:n});b.disabled=false;
  if(!j||!j.ok){m.textContent=(j&&j.erreur)||'Erreur';return}
  const keep=(()=>{try{return !!localStorage.getItem('lmstt_pin')}catch(e){return false}})();PIN=ident+'\n'+n;store.del('lmstt_pin');store.set('lmstt_pin',PIN,keep);
