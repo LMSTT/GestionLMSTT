@@ -28,6 +28,8 @@ window.bvRender=async function(v){const box=g(v==='buvette'?'bvBox':'bvgBox');if
  await charger();await sync();if(!D){box.innerHTML='<div class="card"><p>Pas de connexion et aucune donnée en mémoire sur cet appareil.</p></div>';return}
  v==='buvette'?caisse():gestion()};
 
+const TY=['Buvette semaine','Pro A','Tournoi','Compétition'];
+const px=p=>{const t=D&&D.session&&D.session.evenement&&D.session.evenement.type,v=p.tarifs&&t?p.tarifs[t]:null;return +(v??p.prix_vente)};
 function vendeurs(){return (D.vendeurs||[]).filter(x=>x.actif!==false).map(x=>x.prenom)}
 let ecran='home';
 /* ---------- écran allumé : pas de veille avant 5 min sans toucher l'écran ---------- */
@@ -53,7 +55,7 @@ function caisse(){badge();eveil();const s=D.session;
  g('bvBox').innerHTML=`<div class="bvbar"><button type="button" class="alt" id="bvHome">← Retour</button><span id="bvSync" class="tag t-a" hidden></span></div>
  ${champNom('bvNom')}
  ${cats.length?`<div class="bvcats"><button type="button" data-c="" class="${cat===null?'on':''}">Tout</button>${cats.map(c=>`<button type="button" data-c="${c.id}" class="${cat===c.id?'on':''}">${E(c.nom)}</button>`).join('')}</div>`:''}
- <div class="bvlay"><div class="bvtiles">${vis.map(p=>{const n=nb(p.id);return `<button type="button" class="bvtile${n?' sel':''}${p.stock<=p.seuil&&p.seuil>0?' bas':''}" data-p="${p.id}">${p.photo?`<img src="${E(p.photo)}" alt="">`:''}${n?`<span class="bvmoins" data-m="${p.id}" role="button" aria-label="Retirer un">−</span><span class="bvn">${n}</span>`:''}<span class="bvlab"><b>${E(p.nom)}</b><span>${eur(p.prix_vente)}</span></span></button>`}).join('')||'<p class="muted">Aucun produit. Un administrateur doit en créer dans Buvette › Gestion.</p>'}</div>
+ <div class="bvlay"><div class="bvtiles">${vis.map(p=>{const n=nb(p.id);return `<button type="button" class="bvtile${n?' sel':''}${p.stock<=p.seuil&&p.seuil>0?' bas':''}" data-p="${p.id}">${p.photo?`<img src="${E(p.photo)}" alt="">`:''}${n?`<span class="bvmoins" data-m="${p.id}" role="button" aria-label="Retirer un">−</span><span class="bvn">${n}</span>`:''}<span class="bvlab"><b>${E(p.nom)}</b><span>${eur(px(p))}</span></span></button>`}).join('')||'<p class="muted">Aucun produit. Un administrateur doit en créer dans Buvette › Gestion.</p>'}</div>
  <div class="card bvcart"><h3>Panier</h3>${cart.length?`<ul class="bvl">${cart.map(l=>`<li><span>${l.q}× ${E(l.n)}</span><span></span><span>${eur(l.q*l.p)}</span></li>`).join('')}</ul>`:'<p class="muted">Touche un produit : 1 touche = 1 article.</p>'}
  <div class="bvtot">${eur(tot)}</div>
  <div class="bvpay"><button type="button" data-pay="cb" ${cart.length?'':'disabled'}>💳 CB</button><button type="button" data-pay="especes" ${cart.length?'':'disabled'}>💶 Espèces</button><button type="button" class="alt" data-pay="offert" ${cart.length?'':'disabled'}>🎁 Offert</button></div>
@@ -65,7 +67,7 @@ function caisse(){badge();eveil();const s=D.session;
   if(b.id==='bvHome'){ecran='home';cart=[];pay=null;return caisse()}
   if(b.id==='bvVide'){cart=[];pay=null;return caisse()}
   if(d.c!==undefined){cat=d.c?+d.c:null;return caisse()}
-  if(d.p){const p=prods.find(x=>x.id===+d.p),l=cart.find(x=>x.id===p.id);l?l.q++:cart.push({id:p.id,n:p.nom,p:+p.prix_vente,q:1});pay=null;return caisse()}
+  if(d.p){const p=prods.find(x=>x.id===+d.p),l=cart.find(x=>x.id===p.id);l?l.q++:cart.push({id:p.id,n:p.nom,p:px(p),q:1});pay=null;return caisse()}
   if(d.pay){if(!lireNom('bvNom')){g('bvNom').classList.add('manque');g('bvNom').focus();return T('Écris ton prénom avant d\'encaisser')}pay={mode:d.pay};return caisse()}
   if(d.ok!==undefined)return valider(d.ok)}}
 
@@ -140,7 +142,8 @@ function gProduits(){const p=editP?D.produits.find(x=>x.id===editP)||{}:{},cats=
  g('bvgIn').innerHTML=`<div class="card"><h3>${editP?'Modifier':'Nouveau produit'}</h3><div class="grid">
  <div><label for="pN">Nom</label><input id="pN" value="${E(p.nom||'')}"></div>
  <div><label for="pC">Catégorie</label><select id="pC"><option value="">—</option>${cats.map(c=>`<option value="${c.id}"${c.id===p.categorie_id?' selected':''}>${E(c.nom)}</option>`).join('')}</select></div>
- <div><label for="pV">Prix de vente (€)</label><input id="pV" type="number" step="0.01" inputmode="decimal" value="${E(p.prix_vente??'')}"></div>
+ <div><label for="pV">Prix de vente par défaut (€)</label><input id="pV" type="number" step="0.01" inputmode="decimal" value="${E(p.prix_vente??'')}"></div>
+ ${TY.map((t,i)=>`<div><label for="pTa${i}">Tarif ${t} (€)</label><input id="pTa${i}" type="number" step="0.01" inputmode="decimal" placeholder="= prix de vente" value="${E((p.tarifs||{})[t]??'')}"></div>`).join('')}
  <div><label for="pA">Prix d'achat (€)</label><input id="pA" type="number" step="0.01" inputmode="decimal" value="${E(p.prix_achat??'')}"></div>
  ${editP?'':`<div><label for="pS">Stock de départ</label><input id="pS" type="number" inputmode="numeric" value="0"></div>`}
  <div><label for="pT">Alerte stock bas à</label><input id="pT" type="number" inputmode="numeric" value="${E(p.seuil??0)}"></div>
@@ -149,9 +152,9 @@ function gProduits(){const p=editP?D.produits.find(x=>x.id===editP)||{}:{},cats=
  <label class="chk"><input type="checkbox" id="pX"${p.actif===false?'':' checked'}> Actif (visible en caisse)</label></div>
  <div class="row" style="margin-top:10px"><button type="button" id="pOk">Enregistrer</button>${editP?'<button type="button" class="alt" id="pNew">Annuler</button>':''}</div></div>
  <div class="card"><div class="scroll"><table class="stack"><thead><tr><th>Produit</th><th>Catégorie</th><th class="n">Vente</th><th class="n">Achat</th><th class="n">Stock</th><th>État</th><th></th></tr></thead><tbody>
- ${(D.produits||[]).map(x=>`<tr><td>${x.photo?`<img class="bvph" style="width:44px;height:44px;vertical-align:middle;margin-right:6px" src="${E(x.photo)}" alt="">`:''}<b>${E(x.nom)}</b></td><td>${E(catNom(x.categorie_id))}</td><td class="n">${eur(x.prix_vente)}</td><td class="n">${eur(x.prix_achat)}</td><td class="n">${x.stock<=x.seuil&&x.seuil>0?`<span class="tag t-r">${x.stock}</span>`:x.stock}</td><td>${x.actif?'<span class="tag t-o">Actif</span>':'<span class="tag">Inactif</span>'}</td><td><div class="acts"><button type="button" class="alt" data-e="${x.id}">Modifier</button><button type="button" class="alt" data-d="${x.id}">Supprimer</button></div></td></tr>`).join('')||'<tr><td class="muted">Aucun produit pour l\'instant.</td></tr>'}
+ ${(D.produits||[]).map(x=>`<tr><td>${x.photo?`<img class="bvph" style="width:44px;height:44px;vertical-align:middle;margin-right:6px" src="${E(x.photo)}" alt="">`:''}<b>${E(x.nom)}</b></td><td>${E(catNom(x.categorie_id))}</td><td class="n">${eur(x.prix_vente)}${Object.keys(x.tarifs||{}).length?`<br><span class="muted">${Object.entries(x.tarifs).map(([t,v])=>E(t)+' '+eur(v)).join('<br>')}</span>`:''}</td><td class="n">${eur(x.prix_achat)}</td><td class="n">${x.stock<=x.seuil&&x.seuil>0?`<span class="tag t-r">${x.stock}</span>`:x.stock}</td><td>${x.actif?'<span class="tag t-o">Actif</span>':'<span class="tag">Inactif</span>'}</td><td><div class="acts"><button type="button" class="alt" data-e="${x.id}">Modifier</button><button type="button" class="alt" data-d="${x.id}">Supprimer</button></div></td></tr>`).join('')||'<tr><td class="muted">Aucun produit pour l\'instant.</td></tr>'}
  </tbody></table></div><p class="muted">Un produit déjà vendu n'est jamais supprimé : il passe en « Inactif ».</p></div>`;
- g('pOk').onclick=()=>save('api_bv_produit',{p:{id:editP||'',nom:g('pN').value,categorie_id:g('pC').value,prix_vente:g('pV').value,prix_achat:g('pA').value,stock:g('pS')?g('pS').value:'',seuil:g('pT').value,ordre:g('pO').value,actif:g('pX').checked,...(photoP!==null?{photo:photoP}:{})}},'Produit enregistré').then(r=>{if(r)editP=null});
+ g('pOk').onclick=()=>save('api_bv_produit',{p:{id:editP||'',nom:g('pN').value,categorie_id:g('pC').value,prix_vente:g('pV').value,prix_achat:g('pA').value,stock:g('pS')?g('pS').value:'',seuil:g('pT').value,ordre:g('pO').value,actif:g('pX').checked,tarifs:Object.fromEntries(TY.map((t,i)=>[t,g('pTa'+i).value])),...(photoP!==null?{photo:photoP}:{})}},'Produit enregistré').then(r=>{if(r)editP=null});
  photoP=null;g('pF').onchange=async()=>{const f=g('pF').files[0];if(!f)return;try{photoP=await reduire(f);g('pImg').src=photoP;g('pImg').hidden=false}catch(e){T('Image illisible')}};
  if(g('pNew'))g('pNew').onclick=()=>{editP=null;gestion()};
  g('bvgIn').onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.e){editP=+b.dataset.e;gestion();scrollTo(0,0)}if(b.dataset.d&&confirm('Supprimer ce produit ?'))save('api_bv_produit_suppr',{p_id:+b.dataset.d},'Fait')}}
