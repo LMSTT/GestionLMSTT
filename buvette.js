@@ -41,10 +41,11 @@ function lireNom(id){const i=g(id);if(i){vendeur=i.value.trim();LS.set('bv_vende
 function lierNom(id){const i=g(id);if(i)i.oninput=()=>{vendeur=i.value.trim();LS.set('bv_vendeur',vendeur);i.classList.remove('manque')}}
 
 function caisse(){badge();eveil();const s=D.session;
- if(ecran==='home'){const ev=s&&s.evenement||{};
-  g('bvBox').innerHTML=`<div class="bvhome"><span id="bvSync" class="tag t-a" hidden></span>${s?`<p class="muted">Caisse ouverte · ${E(ev.type)}${ev.adversaire?' – '+E(ev.adversaire):ev.libelle?' – '+E(ev.libelle):''}</p>`:''}
-  <button type="button" class="bvbig" id="bvGo">🥤 Faire une vente</button>${s?'<button type="button" class="alt" id="bvClot">Clôturer la caisse</button>':''}</div>`;badge();
-  g('bvBox').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='bvGo'){ecran='vente';cart=[];pay=null;return caisse()}if(b.id==='bvClot')return cloture()};return}
+ if(ecran==='ouvrir')return ouverture();
+ if(ecran==='home'){const ev=s&&s.evenement||{},manif=s&&!s.permanente;
+  g('bvBox').innerHTML=`<div class="bvhome"><span id="bvSync" class="tag t-a" hidden></span>${manif?`<p class="muted">Caisse manifestation ouverte · ${E(ev.type)}${ev.libelle?' – '+E(ev.libelle):ev.adversaire?' – '+E(ev.adversaire):''}</p>`:'<p class="muted">Buvette semaine</p>'}
+  <button type="button" class="bvbig" id="bvGo">🥤 Faire une vente</button>${manif?'<button type="button" class="alt" id="bvClot">Clôturer la caisse manifestation</button>':'<button type="button" class="alt" id="bvMan">Ouvrir une caisse manifestation</button>'}</div>`;badge();
+  g('bvBox').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='bvGo'){ecran=s?'vente':'ouvrir';cart=[];pay=null;return caisse()}if(b.id==='bvClot')return cloture();if(b.id==='bvMan'){ecran='ouvrir';return caisse()}};return}
  if(!s)return ouverture();
  const cats=(D.categories||[]).filter(c=>c.actif!==false),prods=(D.produits||[]).filter(p=>p.actif!==false);
  if(cat!==null&&!cats.some(c=>c.id===cat))cat=null;
@@ -83,12 +84,13 @@ function valider(x){const tot=cart.reduce((a,l)=>a+l.q*l.p,0),v={id:uid(),sessio
  cart=[];pay=null;caisse();grand(msg);sync()}
 function grand(m){let o=g('bvFlash');if(!o){o=document.createElement('div');o.id='bvFlash';document.body.appendChild(o)}o.textContent=m;o.className='on';clearTimeout(o._t);o._t=setTimeout(()=>o.className='',m.startsWith('Rends')?4000:1500);o.onclick=()=>o.className=''}
 
-function ouverture(){g('bvBox').innerHTML=`<div class="card bvcard"><h2>Ouvrir la caisse</h2>${champNom('bvNomO')}
- <label>Événement</label><div class="bvgrid" id="bvType">${['Pro A','Tournoi','Compétition','Buvette semaine'].map((t,i)=>`<button type="button" class="${i?'alt':''}" data-t="${t}">${t}</button>`).join('')}</div>
+function ouverture(){g('bvBox').innerHTML=`<div class="card bvcard"><h2>Ouvrir une caisse manifestation</h2>${champNom('bvNomO')}
+ <label>Événement</label><div class="bvgrid" id="bvType">${['Pro A','Tournoi','Compétition'].map((t,i)=>`<button type="button" class="${i?'alt':''}" data-t="${t}">${t}</button>`).join('')}</div>
  <label for="bvDate">Date</label><input id="bvDate" type="date" value="${new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10)}">
  <label for="bvAdv">Description compétition</label><input id="bvAdv" autocomplete="off" placeholder="Ex. LMSTT – Metz, Tournoi régional…">
  <label for="bvFond">Fond de caisse (€)</label><input id="bvFond" type="number" inputmode="decimal" step="0.01" value="${E(LS.get('bv_fond',''))}">
- <button type="button" class="bvgo" id="bvOpen" style="margin-top:14px">Ouvrir la caisse</button></div>`;
+ <div class="row" style="margin-top:14px"><button type="button" class="alt" id="bvOBack">Retour</button><button type="button" class="bvgo" id="bvOpen">Ouvrir la caisse</button></div></div>`;
+ g('bvOBack').onclick=()=>{ecran='home';caisse()};
  let type='Pro A';
  g('bvType').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;type=b.dataset.t;for(const x of g('bvType').children)x.className=x===b?'':'alt'};
  lierNom('bvNomO');
@@ -103,7 +105,7 @@ function cloture(){const s=D.session,t=s.totaux||{},att=+s.fond+ +t.especes;
  <label for="bvTpe">Total du ticket de fin de journée TPE (€)</label><input id="bvTpe" type="number" inputmode="decimal" step="0.01">
  <label for="bvCom">Commentaire (facultatif)</label><input id="bvCom">
  <div class="row" style="margin-top:14px"><button type="button" class="alt" id="bvBack">Retour</button><button type="button" id="bvDo">Clôturer</button></div></div>`;
- g('bvBox').onclick=null;lierNom('bvNomC');g('bvBack').onclick=()=>{ecran='home';caisse()};
+ if(s.permanente){ecran='home';return caisse()}g('bvBox').onclick=null;lierNom('bvNomC');g('bvBack').onclick=()=>{ecran='home';caisse()};
  g('bvDo').onclick=async()=>{if(Q().length&&!confirm('Des ventes ne sont pas encore envoyées. Clôturer quand même ?'))return;const n=x=>String(g(x).value).replace(',','.');if(n('bvEsp')===''||n('bvTpe')==='')return T('Remplis les deux totaux');if(!lireNom('bvNomC'))return T('Écris ton prénom');
   await sync();const j=await call('api_bv_cloturer',{p:{session_id:s.id,especes_comptees:+n('bvEsp'),cb_tpe:+n('bvTpe'),commentaire:g('bvCom').value,vendeur}});if(!j)return;if(!j.ok)return T(j.erreur);
   await charger();recap(j.recap,'bvBox')}}

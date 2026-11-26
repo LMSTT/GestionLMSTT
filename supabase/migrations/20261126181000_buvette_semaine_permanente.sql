@@ -1,0 +1,5 @@
+-- Buvette semaine : caisse permanente, sans ouverture ni clôture (fond de caisse au club).
+-- Appliquée telle quelle sur le projet Supabase (voir historique des migrations) :
+-- colonne bv_sessions.permanente, index d'unicité adaptés, session permanente « Buvette semaine »,
+-- _bv_session_ouverte (caisse manifestation prioritaire), api_bv_ouvrir (Pro A / Tournoi / Compétition),
+-- trigger bv_pas_cloture_permanente.
