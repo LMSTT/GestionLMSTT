@@ -538,11 +538,11 @@ function apply(j){
  const B=document.body.classList;for(const k of KEYS)B.toggle('no-'+k,!DR[k]);B.toggle('no-pa',!(DR.stocks||DR.entrees||DR.bilan||DR.catalogue));B.toggle('no-admin',!isAdm());B.toggle('no-equipementier',EQ_VEILLE||!DR.equipementier);$('uEq').hidden=EQ_VEILLE;B.toggle('no-buvette',!DR.buvette);for(const k of ['eq_bord','eq_ca','eq_dot'])B.toggle('no-'+k,!DR[k]);const fe=['eq-bord','eq-ca','eq-dot'].find(allowed);if(fe)$('navEq').setAttribute('href','#'+fe);B.toggle('must',MUST);
  const first=['caisse','stocks','ventes','bilan','entrees','catalogue'].find(allowed);$('navBq').hidden=!first||MUST;if(first)$('navBq').setAttribute('href','#'+first);
  $('who').textContent=j.nom+' · '+(ROLE==='admin'?'admin':DR.caisse&&!DR.stocks&&!DR.ventes?'vendeur':'utilisateur');
- const h0=location.hash.slice(1)||'accueil',BVO=!MUST&&!!DR.buvette&&!isAdm()&&!first&&!DR.equipementier;B.toggle('bvonly',BVO);B.toggle('no-bvresp',!(isAdm()||DR.bv_resp));if(BVO&&!allowed(h0)){location.hash='buvette'}else if(!allowed(h0)){location.hash=MUST?'compte':'accueil'}else route();
+ const h0=location.hash.slice(1)||'accueil',BVO=!MUST&&!!DR.buvette&&!isAdm()&&!first&&!DR.equipementier;B.toggle('bvonly',BVO);document.querySelector('.ttl h1').textContent=BVO?'Ventes Buvette':'Espace de Gestion LMSTT';B.toggle('no-bvresp',!(isAdm()||DR.bv_resp));if(BVO&&!allowed(h0)){location.hash='buvette'}else if(!allowed(h0)){location.hash=MUST?'compte':'accueil'}else route();
  st.textContent=MUST?'Choisis ton code PIN personnel pour continuer.':'À jour à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}
 async function load(){if(!PIN)return false;const j=await rpc('api_donnees',{p_pin:PIN});if(!j||!j.ok){st.textContent=(j&&j.erreur)||'Erreur';if(j&&j.code==='session')logout(j.erreur);return false}apply(j);return true}
 async function act(fn,args,okMsg){const j=await rpc(fn,{p_pin:PIN,...args});if(!j||!j.ok){toast((j&&j.erreur)||'Erreur');if(j&&j.code==='session')logout(j.erreur);return null}toast(okMsg);await load();return j}
-function logout(msg){$('lock').hidden=true;document.body.classList.remove('bvonly');if(PIN&&!msg)rpc('api_deconnexion',{p_pin:PIN});PIN='';READY=false;store.del('lmstt_pin');$('login').style.display='grid';$('pin').value='';$('loginMsg').textContent=typeof msg==='string'?msg:'';loadIdents()}
+function logout(msg){$('lock').hidden=true;document.body.classList.remove('bvonly');document.querySelector('.ttl h1').textContent='Espace de Gestion LMSTT';if(PIN&&!msg)rpc('api_deconnexion',{p_pin:PIN});PIN='';READY=false;store.del('lmstt_pin');$('login').style.display='grid';$('pin').value='';$('loginMsg').textContent=typeof msg==='string'?msg:'';loadIdents()}
 $('logout').onclick=()=>logout();
 let MV=[],mvPage=1;
 function renderMesVentes(){const n=Math.max(1,Math.ceil(MV.length/10));if(mvPage>n)mvPage=n;
@@ -716,5 +716,5 @@ addEventListener('online',()=>{if(PIN)load()});addEventListener('offline',()=>{s
 window.LM={rpc,toast,logout,get PIN(){return PIN},get READY(){return READY},get ADM(){return ADM}};
 }
 </script>
-<script src="buvette.js?v=21"></script>
+<script src="buvette.js?v=22"></script>
 </body></html>
