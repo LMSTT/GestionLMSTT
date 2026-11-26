@@ -31,7 +31,7 @@ window.bvRender=async function(v){const box=g(v==='buvette'?'bvBox':'bvgBox');if
 const TY=['Buvette semaine','Pro A','Tournoi','Compétition'];
 const px=p=>{const t=D&&D.session&&D.session.evenement&&D.session.evenement.type,v=p.tarifs&&t?p.tarifs[t]:null;return +(v??p.prix_vente)};
 function vendeurs(){return (D.vendeurs||[]).filter(x=>x.actif!==false).map(x=>x.prenom)}
-let ecran='home';
+let ecran='vente';
 /* ---------- écran allumé : pas de veille avant 5 min sans toucher l'écran ---------- */
 let wl=null,wlT=null;const onBv=()=>location.hash==='#buvette'&&!document.hidden;
 async function eveil(){clearTimeout(wlT);if(!onBv()){if(wl){wl.release().catch(()=>{});wl=null}return}
