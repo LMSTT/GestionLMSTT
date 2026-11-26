@@ -80,11 +80,11 @@ function panneau(){const tot=cart.reduce((a,l)=>a+l.q*l.p,0),P=g('bvPay');
  else if(pay.mode==='especes'){const b=[...new Set([tot,...[5,10,20,50].filter(x=>x>tot)])];
   P.innerHTML=qui+`<p><b>Somme reçue ?</b></p><div class="bvgrid">${b.map(x=>`<button type="button" class="bvgo" data-ok="${x}">${x===tot?'Compte juste':eur(x)}</button>`).join('')}</div>
   <div class="row"><input id="bvRecu" type="number" inputmode="decimal" step="0.01" placeholder="Autre montant"><button type="button" data-ok="autre">OK</button></div>`}
- else P.innerHTML=qui+`<p><b>Offert à :</b></p><input id="bvBen" placeholder="Nom (facultatif)" autocomplete="off"><div class="bvgrid" style="margin-top:8px"><button type="button" class="bvgo" data-ok="Staff">Staff</button><button type="button" class="bvgo" data-ok="Joueur">Joueur</button></div>`}
+ else P.innerHTML=qui+`<p><b>Pour qui ?</b></p><input id="bvBen" placeholder="Nom de la personne (obligatoire)" autocomplete="off"><p class="muted" style="margin:6px 0 0">Puis touche Staff ou Joueur :</p><div class="bvgrid" style="margin-top:8px"><button type="button" class="bvgo" data-ok="Staff">Staff</button><button type="button" class="bvgo" data-ok="Joueur">Joueur</button></div>`}
 
 function valider(x){const tot=cart.reduce((a,l)=>a+l.q*l.p,0),v={id:uid(),session_id:D.session.id,vendeur,vendue_le:new Date().toISOString(),mode:pay.mode,lignes:cart.map(l=>({produit_id:l.id,qte:l.q,prix:l.p}))};let msg='Vente enregistrée ✔';
  if(pay.mode==='especes'){const r=x==='autre'?+String(g('bvRecu').value).replace(',','.'):+x;if(!(r>=tot-0.001))return T('Montant reçu insuffisant');v.recu=r;const rendu=r-tot;msg=rendu>0.001?`Rends ${eur(rendu)}`:'Compte juste ✔'}
- if(pay.mode==='offert'){v.beneficiaire_type=x;v.beneficiaire_nom=(g('bvBen').value||'').trim();msg='Offert enregistré ✔'}
+ if(pay.mode==='offert'){v.beneficiaire_type=x;v.beneficiaire_nom=(g('bvBen').value||'').trim();if(!v.beneficiaire_nom){g('bvBen').focus();return T('Indique pour qui est l\'offert')}msg='Offert enregistré ✔'}
  LS.set('bv_q',Q().concat([v]));if(!vendeurs().some(n=>n.toLowerCase()===vendeur.toLowerCase()))LS.set('bv_noms',[...new Set([vendeur,...LS.get('bv_noms',[])])].slice(0,30));
  for(const l of cart){const p=D.produits.find(p=>p.id===l.id);if(p)p.stock-=l.q}LS.set('bv_cache',D);
  cart=[];pay=null;caisse();grand(msg);sync()}
