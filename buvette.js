@@ -68,13 +68,15 @@ function caisse(){badge();eveil();const s=D.session;
   if(b.id==='bvVide'){cart=[];pay=null;return caisse()}
   if(d.p){const p=prods.find(x=>x.id===+d.p),l=cart.find(x=>x.id===p.id);l?l.q++:cart.push({id:p.id,n:p.nom,p:px(p),q:1});pay=null;return caisse()}
   if(d.pay){pay={mode:d.pay,nom:false};return caisse()}
-  if(d.qui!==undefined){let n=d.qui;if(n==='*'){n=(g('bvQui').value||'').trim();if(!n)return T('Écris ton prénom')}vendeur=n.charAt(0).toUpperCase()+n.slice(1);LS.set('bv_vendeur',vendeur);pay.nom=true;return caisse()}
+  if(d.qui!==undefined){const sv=g('bvQuiSel').value;let n=(sv&&sv!=='*')?sv:(g('bvQui').value||'').trim();if(!n)return T('Choisis ou écris ton prénom');vendeur=n.charAt(0).toUpperCase()+n.slice(1);LS.set('bv_vendeur',vendeur);pay.nom=true;return caisse()}
   if(d.ok!==undefined)return valider(d.ok)}}
 
 function panneau(){const tot=cart.reduce((a,l)=>a+l.q*l.p,0),P=g('bvPay');
  if(!pay.nom){const l=[...new Set([...(vendeur?[vendeur]:[]),...vendeurs(),...(LS.get('bv_noms',[]))])];
-  P.innerHTML=`<p><b>Qui encaisse ?</b></p><div class="bvgrid">${l.map(n=>`<button type="button" class="bvp" data-qui="${E(n)}">${E(n)}</button>`).join('')}</div>
-  <div class="row" style="margin-top:8px"><input id="bvQui" placeholder="Nouveau prénom" autocomplete="off"><button type="button" data-qui="*">OK</button></div>`;return}
+  P.innerHTML=`<p><b>Qui encaisse ?</b></p><select id="bvQuiSel" style="font-size:19px;min-height:52px;width:100%">${l.length?'':'<option value="">— aucun prénom enregistré —</option>'}${l.map(n=>`<option value="${E(n)}">${E(n)}</option>`).join('')}<option value="*">➕ Nouveau prénom…</option></select>
+  <input id="bvQui" placeholder="Écris ton prénom" autocomplete="off" style="margin-top:8px"${l.length?' hidden':''}>
+  <button type="button" class="bvgo" data-qui="!" style="margin-top:10px">Continuer</button>`;
+  g('bvQuiSel').onchange=e=>{const n=e.target.value==='*'||!e.target.value;g('bvQui').hidden=!n;if(n)g('bvQui').focus()};return}
  const qui=`<p class="muted">Vendeur : <b>${E(vendeur)}</b></p>`;
  if(pay.mode==='cb')P.innerHTML=qui+`<p><b>Encaisse ${eur(tot)} sur le TPE.</b></p><button type="button" class="bvgo" data-ok="">✔ Paiement accepté</button>`;
  else if(pay.mode==='especes'){const b=[...new Set([tot,...[5,10,20,50].filter(x=>x>tot)])];
