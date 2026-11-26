@@ -84,15 +84,16 @@ function valider(x){const tot=cart.reduce((a,l)=>a+l.q*l.p,0),v={id:uid(),sessio
 function grand(m){let o=g('bvFlash');if(!o){o=document.createElement('div');o.id='bvFlash';document.body.appendChild(o)}o.textContent=m;o.className='on';clearTimeout(o._t);o._t=setTimeout(()=>o.className='',m.startsWith('Rends')?4000:1500);o.onclick=()=>o.className=''}
 
 function ouverture(){g('bvBox').innerHTML=`<div class="card bvcard"><h2>Ouvrir la caisse</h2>${champNom('bvNomO')}
- <label>Événement</label><div class="bvgrid" id="bvType">${['Pro A','Tournoi','Compétition','Stage','Autre'].map((t,i)=>`<button type="button" class="${i?'alt':''}" data-t="${t}">${t}</button>`).join('')}</div>
- <label for="bvAdv" id="bvAdvL">Adversaire</label><input id="bvAdv" autocomplete="off">
+ <label>Événement</label><div class="bvgrid" id="bvType">${['Pro A','Tournoi','Compétition','Buvette semaine'].map((t,i)=>`<button type="button" class="${i?'alt':''}" data-t="${t}">${t}</button>`).join('')}</div>
+ <label for="bvDate">Date</label><input id="bvDate" type="date" value="${new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10)}">
+ <label for="bvAdv">Description compétition</label><input id="bvAdv" autocomplete="off" placeholder="Ex. LMSTT – Metz, Tournoi régional…">
  <label for="bvFond">Fond de caisse (€)</label><input id="bvFond" type="number" inputmode="decimal" step="0.01" value="${E(LS.get('bv_fond',''))}">
  <button type="button" class="bvgo" id="bvOpen" style="margin-top:14px">Ouvrir la caisse</button></div>`;
  let type='Pro A';
- g('bvType').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;type=b.dataset.t;for(const x of g('bvType').children)x.className=x===b?'':'alt';g('bvAdvL').textContent=type==='Pro A'?'Adversaire':'Libellé (facultatif)'};
+ g('bvType').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;type=b.dataset.t;for(const x of g('bvType').children)x.className=x===b?'':'alt'};
  lierNom('bvNomO');
- g('bvOpen').onclick=async()=>{if(!lireNom('bvNomO'))return T('Écris ton prénom');const f=String(g('bvFond').value).replace(',','.');if(f===''||+f<0)return T('Indique le fond de caisse');const a=g('bvAdv').value.trim();
-  const j=await call('api_bv_ouvrir',{p:{type,fond:+f,vendeur,adversaire:type==='Pro A'?a:'',libelle:type==='Pro A'?'':a}});if(!j)return;if(!j.ok)return T(j.erreur);LS.set('bv_fond',f);await charger();T('Caisse ouverte');ecran='vente';caisse()}}
+ g('bvOpen').onclick=async()=>{if(!lireNom('bvNomO'))return T('Écris ton prénom');const f=String(g('bvFond').value).replace(',','.');if(f===''||+f<0)return T('Indique le fond de caisse');const a=g('bvAdv').value.trim(),dt=g('bvDate').value;if(!dt)return T('Indique la date');
+  const j=await call('api_bv_ouvrir',{p:{type,date:dt,fond:+f,vendeur,adversaire:'',libelle:a}});if(!j)return;if(!j.ok)return T(j.erreur);LS.set('bv_fond',f);await charger();T('Caisse ouverte');ecran='vente';caisse()}}
 
 function cloture(){const s=D.session,t=s.totaux||{},att=+s.fond+ +t.especes;
  g('bvBox').innerHTML=`<div class="card bvcard"><h2>Clôturer la caisse</h2>
