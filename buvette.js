@@ -50,38 +50,42 @@ function caisse(){badge();eveil();const s=D.session;
   g('bvBox').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='bvGo'){ecran=s?'vente':'ouvrir';cart=[];pay=null;return caisse()}if(b.id==='bvClot')return cloture();if(b.id==='bvMan'){ecran='ouvrir';return caisse()}};return}
  if(!s)return ouverture();
  const cats=(D.categories||[]).filter(c=>c.actif!==false),prods=(D.produits||[]).filter(p=>p.actif!==false);
- if(cat!==null&&!cats.some(c=>c.id===cat))cat=null;
- const vis=prods.filter(p=>cat===null||p.categorie_id===cat),tot=cart.reduce((a,l)=>a+l.q*l.p,0),nb=id=>(cart.find(l=>l.id===id)||{}).q||0;
+
+ const tot=cart.reduce((a,l)=>a+l.q*l.p,0),nb=id=>(cart.find(l=>l.id===id)||{}).q||0;
+ const tile=p=>{const n=nb(p.id);return `<button type="button" class="bvtile${n?' sel':''}${p.stock<=p.seuil&&p.seuil>0?' bas':''}" data-p="${p.id}">${p.photo?`<img src="${E(p.photo)}" alt="">`:''}${n?`<span class="bvmoins" data-m="${p.id}" role="button" aria-label="Retirer un">−</span><span class="bvn">${n}</span>`:''}<span class="bvlab"><b>${E(p.nom)}</b><span>${eur(px(p))}</span></span></button>`};
+ const grp=[...cats.map(c=>[c.nom,prods.filter(p=>p.categorie_id===c.id)]),['Autres',prods.filter(p=>!cats.some(c=>c.id===p.categorie_id))]].filter(x=>x[1].length);
  g('bvBox').innerHTML=`<div class="bvbar"><button type="button" class="alt" id="bvHome">← Retour</button><span id="bvSync" class="tag t-a" hidden></span></div>
- ${champNom('bvNom')}
- ${cats.length?`<div class="bvcats"><button type="button" data-c="" class="${cat===null?'on':''}">Tout</button>${cats.map(c=>`<button type="button" data-c="${c.id}" class="${cat===c.id?'on':''}">${E(c.nom)}</button>`).join('')}</div>`:''}
- <div class="bvlay"><div class="bvtiles">${vis.map(p=>{const n=nb(p.id);return `<button type="button" class="bvtile${n?' sel':''}${p.stock<=p.seuil&&p.seuil>0?' bas':''}" data-p="${p.id}">${p.photo?`<img src="${E(p.photo)}" alt="">`:''}${n?`<span class="bvmoins" data-m="${p.id}" role="button" aria-label="Retirer un">−</span><span class="bvn">${n}</span>`:''}<span class="bvlab"><b>${E(p.nom)}</b><span>${eur(px(p))}</span></span></button>`}).join('')||'<p class="muted">Aucun produit. Un administrateur doit en créer dans Buvette › Gestion.</p>'}</div>
+ <div class="bvlay"><div>${grp.map(([t,l])=>`<h3 class="bvsec">${E(t)}</h3><div class="bvtiles">${l.map(tile).join('')}</div>`).join('')||'<p class="muted">Aucun produit. Un responsable doit en créer dans Buvette › Gestion.</p>'}</div>
  <div class="card bvcart"><h3>Panier</h3>${cart.length?`<ul class="bvl">${cart.map(l=>`<li><span>${l.q}× ${E(l.n)}</span><span></span><span>${eur(l.q*l.p)}</span></li>`).join('')}</ul>`:'<p class="muted">Touche un produit : 1 touche = 1 article.</p>'}
  <div class="bvtot">${eur(tot)}</div>
  <div class="bvpay"><button type="button" data-pay="cb" ${cart.length?'':'disabled'}>💳 CB</button><button type="button" data-pay="especes" ${cart.length?'':'disabled'}>💶 Espèces</button><button type="button" class="alt" data-pay="offert" ${cart.length?'':'disabled'}>🎁 Offert</button></div>
  ${cart.length?'<button type="button" class="alt bvvide" id="bvVide">Vider le panier</button>':''}
  <div id="bvPay"></div></div></div>`;
- badge();lierNom('bvNom');if(pay)panneau();
+ badge();if(pay)panneau();
  g('bvBox').onclick=e=>{const m=e.target.closest('[data-m]');if(m){const i=cart.findIndex(l=>l.id===+m.dataset.m);if(i>=0&&--cart[i].q<=0)cart.splice(i,1);pay=null;return caisse()}
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(b.id==='bvHome'){ecran='home';cart=[];pay=null;return caisse()}
   if(b.id==='bvVide'){cart=[];pay=null;return caisse()}
-  if(d.c!==undefined){cat=d.c?+d.c:null;return caisse()}
   if(d.p){const p=prods.find(x=>x.id===+d.p),l=cart.find(x=>x.id===p.id);l?l.q++:cart.push({id:p.id,n:p.nom,p:px(p),q:1});pay=null;return caisse()}
-  if(d.pay){if(!lireNom('bvNom')){g('bvNom').classList.add('manque');g('bvNom').focus();return T('Écris ton prénom avant d\'encaisser')}pay={mode:d.pay};return caisse()}
+  if(d.pay){pay={mode:d.pay,nom:false};return caisse()}
+  if(d.qui!==undefined){let n=d.qui;if(n==='*'){n=(g('bvQui').value||'').trim();if(!n)return T('Écris ton prénom')}vendeur=n.charAt(0).toUpperCase()+n.slice(1);LS.set('bv_vendeur',vendeur);pay.nom=true;return caisse()}
   if(d.ok!==undefined)return valider(d.ok)}}
 
 function panneau(){const tot=cart.reduce((a,l)=>a+l.q*l.p,0),P=g('bvPay');
- if(pay.mode==='cb')P.innerHTML=`<p><b>Encaisse ${eur(tot)} sur le TPE.</b></p><button type="button" class="bvgo" data-ok="">✔ Paiement accepté</button>`;
+ if(!pay.nom){const l=[...new Set([...(vendeur?[vendeur]:[]),...vendeurs(),...(LS.get('bv_noms',[]))])];
+  P.innerHTML=`<p><b>Qui encaisse ?</b></p><div class="bvgrid">${l.map(n=>`<button type="button" class="bvp" data-qui="${E(n)}">${E(n)}</button>`).join('')}</div>
+  <div class="row" style="margin-top:8px"><input id="bvQui" placeholder="Nouveau prénom" autocomplete="off"><button type="button" data-qui="*">OK</button></div>`;return}
+ const qui=`<p class="muted">Vendeur : <b>${E(vendeur)}</b></p>`;
+ if(pay.mode==='cb')P.innerHTML=qui+`<p><b>Encaisse ${eur(tot)} sur le TPE.</b></p><button type="button" class="bvgo" data-ok="">✔ Paiement accepté</button>`;
  else if(pay.mode==='especes'){const b=[...new Set([tot,...[5,10,20,50].filter(x=>x>tot)])];
-  P.innerHTML=`<p><b>Somme reçue ?</b></p><div class="bvgrid">${b.map(x=>`<button type="button" class="bvgo" data-ok="${x}">${x===tot?'Compte juste':eur(x)}</button>`).join('')}</div>
+  P.innerHTML=qui+`<p><b>Somme reçue ?</b></p><div class="bvgrid">${b.map(x=>`<button type="button" class="bvgo" data-ok="${x}">${x===tot?'Compte juste':eur(x)}</button>`).join('')}</div>
   <div class="row"><input id="bvRecu" type="number" inputmode="decimal" step="0.01" placeholder="Autre montant"><button type="button" data-ok="autre">OK</button></div>`}
- else P.innerHTML=`<p><b>Offert à :</b></p><input id="bvBen" placeholder="Nom (facultatif)" autocomplete="off"><div class="bvgrid" style="margin-top:8px"><button type="button" class="bvgo" data-ok="Staff">Staff</button><button type="button" class="bvgo" data-ok="Joueur">Joueur</button></div>`}
+ else P.innerHTML=qui+`<p><b>Offert à :</b></p><input id="bvBen" placeholder="Nom (facultatif)" autocomplete="off"><div class="bvgrid" style="margin-top:8px"><button type="button" class="bvgo" data-ok="Staff">Staff</button><button type="button" class="bvgo" data-ok="Joueur">Joueur</button></div>`}
 
 function valider(x){const tot=cart.reduce((a,l)=>a+l.q*l.p,0),v={id:uid(),session_id:D.session.id,vendeur,vendue_le:new Date().toISOString(),mode:pay.mode,lignes:cart.map(l=>({produit_id:l.id,qte:l.q,prix:l.p}))};let msg='Vente enregistrée ✔';
  if(pay.mode==='especes'){const r=x==='autre'?+String(g('bvRecu').value).replace(',','.'):+x;if(!(r>=tot-0.001))return T('Montant reçu insuffisant');v.recu=r;const rendu=r-tot;msg=rendu>0.001?`Rends ${eur(rendu)}`:'Compte juste ✔'}
  if(pay.mode==='offert'){v.beneficiaire_type=x;v.beneficiaire_nom=(g('bvBen').value||'').trim();msg='Offert enregistré ✔'}
- LS.set('bv_q',Q().concat([v]));
+ LS.set('bv_q',Q().concat([v]));if(!vendeurs().some(n=>n.toLowerCase()===vendeur.toLowerCase()))LS.set('bv_noms',[...new Set([vendeur,...LS.get('bv_noms',[])])].slice(0,30));
  for(const l of cart){const p=D.produits.find(p=>p.id===l.id);if(p)p.stock-=l.q}LS.set('bv_cache',D);
  cart=[];pay=null;caisse();grand(msg);sync()}
 function grand(m){let o=g('bvFlash');if(!o){o=document.createElement('div');o.id='bvFlash';document.body.appendChild(o)}o.textContent=m;o.className='on';clearTimeout(o._t);o._t=setTimeout(()=>o.className='',m.startsWith('Rends')?4000:1500);o.onclick=()=>o.className=''}
