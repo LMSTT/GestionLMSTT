@@ -24,7 +24,7 @@ async function sync(){if(syncing||!PINf())return;const q=Q();if(!q.length){badge
 setInterval(sync,15000);addEventListener('online',sync);
 
 /* ---------- vues ---------- */
-window.bvRender=async function(v){const box=g(v==='buvette'?'bvBox':'bvgBox');if(!D)box.innerHTML='<p class="muted">Chargement…</p>';
+window.bvRender=async function(v){if(v==='bv-historique')return historique();const box=g(v==='buvette'?'bvBox':'bvgBox');if(!D)box.innerHTML='<p class="muted">Chargement…</p>';
  await charger();await sync();if(!D){box.innerHTML='<div class="card"><p>Pas de connexion et aucune donnée en mémoire sur cet appareil.</p></div>';return}
  v==='buvette'?caisse():gestion()};
 
@@ -131,6 +131,19 @@ function recap(r,box){const m=r.par_mode||{},e=r.evenement||{},ec=x=>`<b style="
  <div class="row noprint" style="margin-top:14px"><button type="button" id="bvPrint">🖨 Imprimer / PDF</button>${box==='bvBox'?'<button type="button" class="alt" id="bvNew">Nouvelle caisse</button>':''}</div></div>`;
  g('bvPrint').onclick=()=>{document.body.classList.add('bvprinting');print();setTimeout(()=>document.body.classList.remove('bvprinting'),500)};
  if(g('bvNew'))g('bvNew').onclick=()=>{ecran='home';caisse()}}
+
+/* ---------- historique des ventes (vendeurs) ---------- */
+let hJours=1;
+async function historique(){const B=g('bvhBox');await sync();B.innerHTML='<p class="muted">Chargement…</p>';
+ const j=await call('api_bv_historique',{p_jours:hJours});if(!j)return;if(!j.ok){B.innerHTML=`<div class="card"><p>${E(j.erreur)}</p></div>`;return}
+ const vs=j.ventes||[],ok=vs.filter(v=>!v.annulee),sum=m=>ok.filter(v=>v.mode===m).reduce((a,v)=>a+ +v.total,0),att=Q().length;
+ const jour=d=>new Date(d).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});let last='';
+ B.innerHTML=`<div class="card"><div class="bvbar">${[[1,"Aujourd'hui"],[7,'7 jours'],[31,'31 jours']].map(([n,l])=>`<button type="button" class="${hJours===n?'':'alt'}" data-j="${n}">${l}</button>`).join('')}</div>
+ ${att?`<p class="tag t-a">⏳ ${att} vente(s) pas encore envoyée(s)</p>`:''}
+ <table><tr><td>Ventes</td><td class="n"><b>${ok.filter(v=>v.mode!=='offert').length}</b></td></tr><tr><td>💶 Espèces</td><td class="n">${eur(sum('especes'))}</td></tr><tr><td>💳 CB</td><td class="n">${eur(sum('cb'))}</td></tr><tr><td><b>Total encaissé</b></td><td class="n"><b>${eur(sum('especes')+sum('cb'))}</b></td></tr><tr><td>🎁 Offerts</td><td class="n">${ok.filter(v=>v.mode==='offert').length}</td></tr></table></div>
+ <div class="card"><ul class="vl bvh">${vs.map(v=>{const d=jour(v.vendue_le),h=d!==last?(last=d,`<li class="muted" style="border:0;padding-top:14px"><b>${E(d)}</b></li>`):'';
+  return h+`<li${v.annulee?' style="opacity:.5"':''}><b>${E(new Date(v.vendue_le).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}))}</b> · ${E(v.vendeur)} · ${MODE[v.mode]}${v.mode==='offert'?' ('+E(v.beneficiaire_type)+(v.beneficiaire_nom?' – '+E(v.beneficiaire_nom):'')+')':''} · <b>${eur(v.total)}</b>${v.annulee?' <span class="tag t-r">Annulée</span>':''}${v.evenement!=='Buvette semaine'?` <span class="tag">${E(v.evenement)}</span>`:''}<br><span class="muted">${(v.lignes||[]).map(l=>l.qte+'× '+E(l.nom)).join(', ')}</span></li>`}).join('')||'<li class="muted">Aucune vente sur la période.</li>'}</ul></div>`;
+ B.onclick=e=>{const b=e.target.closest('[data-j]');if(b){hJours=+b.dataset.j;historique()}}}
 
 /* ---------- gestion (responsables) ---------- */
 let onglet='produits',editP=null,photoP=null;

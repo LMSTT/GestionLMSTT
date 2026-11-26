@@ -68,9 +68,10 @@ body.no-caisse .need-caisse,body.no-stocks .need-stocks,body.no-ventes .need-ven
 .bvtile .bvmoins{position:absolute;top:6px;left:6px;width:44px;height:44px;border-radius:22px;background:#fff;color:var(--ink);font:700 26px sans-serif;display:flex;align-items:center;justify-content:center;z-index:2}.bvtile.bas{box-shadow:inset 0 -8px 0 var(--red)}
 .bvsec{margin:14px 0 8px;font:700 20px Oswald,sans-serif;color:var(--blue)}.bvp{min-height:64px}
 .bvph{width:90px;height:90px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
-body.no-bvresp .need-bvresp{display:none!important}body.bvonly #nav,body.bvonly.no-bvresp #subB,body.bvonly #status,body.bvonly .foot{display:none!important}
+body.no-bvresp .need-bvresp{display:none!important}body.bvonly #nav,body.bvonly #status,body.bvonly .foot{display:none!important}
 @media(max-width:760px){#bvBox .bvcart{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:20;max-height:75vh;overflow:auto;border-radius:16px 16px 0 0;box-shadow:0 -6px 24px #0004;padding:10px 12px}
 #bvBox .bvcart h3,#bvBox .bvcart>p.muted{display:none}#bvBox .bvcart .bvl{max-height:18vh;overflow:auto}#bvBox .bvtot{margin:4px 0 8px;font-size:28px}#bvBox .bvvide{min-height:32px;margin-top:6px}#bvBox .bvlay{padding-bottom:190px}}
+#subB a{font-size:17px}.bvh li{padding:8px 0;border-bottom:1px solid var(--line)}
 #bvFlash{position:fixed;inset:auto 0 30% 0;margin:auto;width:min(90vw,520px);background:var(--ok);color:#fff;font:700 34px Oswald,sans-serif;text-align:center;padding:28px 16px;border-radius:18px;box-shadow:0 10px 40px #0006;z-index:99;display:none}#bvFlash.on{display:block}
 @media print{body.bvprinting *{visibility:hidden}body.bvprinting #bvRecap,body.bvprinting #bvRecap *{visibility:visible}body.bvprinting #bvRecap{position:absolute;inset:0;border:0}body.bvprinting .noprint{display:none}}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}#who{font-size:14px;opacity:.9}button.out{color:#fff;border-color:#fff;min-height:36px;padding:6px 12px}
@@ -106,7 +107,7 @@ pre,.scroll{overflow-x:auto}
 <nav id="subC" class="subn" aria-label="Mon compte"><a href="#compte">Mes infos</a><a href="#mesventes">Mes ventes</a><a href="#acces">Accès</a><a href="#appareils">Mes appareils</a></nav>
 <nav id="sub" class="subn" aria-label="Boutique"><a class="need-caisse" href="#caisse">Caisse</a><a class="need-stocks" href="#stocks">Stocks</a><a class="need-ventes" href="#ventes">Ventes</a><a class="need-entrees" href="#entrees">Entrées &amp; ajustements</a><a class="need-bilan" href="#bilan">Bilan</a><a class="need-catalogue" href="#catalogue">Catalogue</a></nav>
 <nav id="subE" class="subn" aria-label="Équipementier"><a class="need-eq_bord" href="#eq-bord">Tableau de bord</a><a class="need-eq_ca" href="#eq-ca">CA Dauphin</a><a class="need-eq_dot" href="#eq-dot">Dotations</a></nav>
-<nav id="subB" class="subn" aria-label="Buvette"><a href="#buvette">Caisse</a><a href="#bv-gestion" class="need-bvresp">Gestion</a></nav>
+<nav id="subB" class="subn" aria-label="Buvette"><a href="#buvette">Caisse</a><a href="#bv-historique">Historique Ventes</a><a href="#bv-gestion" class="need-bvresp">Gestion</a></nav>
 <nav id="subA" class="subn" aria-label="Administration"><a href="#adm-users">Utilisateurs</a><a href="#adm-sessions">Sessions</a><a href="#adm-journal">Journal</a><a href="#bv-gestion">Produits buvette</a><a href="#adm-params">Paramètres</a><a href="#adm-save">Sauvegarde</a></nav>
 <main>
 <p id="status"></p>
@@ -323,6 +324,7 @@ pre,.scroll{overflow-x:auto}
 </section>
 <section id="buvette"><div id="bvBox"></div></section>
 <section id="bv-gestion"><div id="bvgBox"></div></section>
+<section id="bv-historique"><div id="bvhBox"></div></section>
 <section id="eq-bord">
  <div class="row" style="margin-bottom:14px"><div style="max-width:260px"><label for="eqS">Saison</label><select id="eqS" class="eqSai"></select></div><p class="muted" style="flex:2 1 300px;margin:0">Partenariat Tibhar / Dauphin.</p></div>
  <div class="kpis" id="eqKpi"></div>
@@ -431,12 +433,12 @@ const label=c=>c.des+(c.decl?' – '+c.decl:'');
 const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 
 /* ---------- navigation ---------- */
-const views=['buvette','bv-gestion','eq-bord','eq-ca','eq-dot','confidentialite','accueil','mesventes','acces','appareils','adm-sessions','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
+const views=['buvette','bv-gestion','bv-historique','eq-bord','eq-ca','eq-dot','confidentialite','accueil','mesventes','acces','appareils','adm-sessions','caisse','stocks','ventes','entrees','bilan','catalogue','compte','adm-users','adm-journal','adm-params','adm-save'];
 const KEYS=['caisse','stocks','ventes','ventes_annuler','entrees','bilan','catalogue'],LBL={bv_caisse:'Buvette caisse',bv_resp:'Buvette responsable',eq_bord:'Équip. tableau de bord',eq_ca:'CA Dauphin',eq_dot:'Dotations',caisse:'Caisse',stocks:'Stocks',ventes:'Ventes',ventes_annuler:'Annuler des ventes',entrees:'Entrées & ajustements',bilan:'Bilan',catalogue:'Catalogue'};
 let DR={},MUST=false,READY=false;
 const isAdm=()=>!!DR.administration,EQ_VEILLE=true; // Équipementier en veille : passer à false pour le réactiver
-function allowed(v){if(document.body.classList.contains('bvonly'))return v==='buvette'||(v==='bv-gestion'&&!!DR.bv_resp);if(v==='confidentialite')return true;if(['accueil','compte','mesventes','acces','appareils'].includes(v))return !MUST||v==='compte';if(MUST)return false;
- if(['caisse','stocks','ventes','entrees','bilan','catalogue'].includes(v))return !!DR[v];if(v==='buvette')return !!DR.buvette;if(v==='bv-gestion')return isAdm()||!!DR.bv_resp;if(v.startsWith('adm-'))return isAdm();if(v.startsWith('eq-'))return !EQ_VEILLE&&!!DR[{'eq-bord':'eq_bord','eq-ca':'eq_ca','eq-dot':'eq_dot'}[v]];return false}
+function allowed(v){if(document.body.classList.contains('bvonly'))return v==='buvette'||v==='bv-historique'||(v==='bv-gestion'&&!!DR.bv_resp);if(v==='confidentialite')return true;if(['accueil','compte','mesventes','acces','appareils'].includes(v))return !MUST||v==='compte';if(MUST)return false;
+ if(['caisse','stocks','ventes','entrees','bilan','catalogue'].includes(v))return !!DR[v];if(v==='buvette'||v==='bv-historique')return !!DR.buvette;if(v==='bv-gestion')return isAdm()||!!DR.bv_resp;if(v.startsWith('adm-'))return isAdm();if(v.startsWith('eq-'))return !EQ_VEILLE&&!!DR[{'eq-bord':'eq_bord','eq-ca':'eq_ca','eq-dot':'eq_dot'}[v]];return false}
 function route(){let v=views.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
  if(READY&&!allowed(v)){location.hash=document.body.classList.contains('bvonly')?'buvette':MUST?'compte':'accueil';return}for(const x of views){$(x).classList.toggle('on',x===v)}const g=v==='accueil'||v==='confidentialite'?'accueil':['compte','mesventes','acces','appareils'].includes(v)?'compte':v.startsWith('adm-')?'admin':v.startsWith('eq-')?'equip':v==='buvette'||v.startsWith('bv-')?'buvette':'boutique';for(const a of $('nav').children)a.classList.toggle('on',a.dataset.g===g);for(const a of $('sub').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('sub').hidden=g!=='boutique';for(const a of $('subC').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subC').hidden=g!=='compte';for(const a of $('subA').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subA').hidden=g!=='admin';for(const a of $('subE').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subE').hidden=g!=='equip';for(const a of $('subB').children)a.classList.toggle('on',a.getAttribute('href')==='#'+v);$('subB').hidden=g!=='buvette';render()}
 addEventListener('hashchange',route);
@@ -509,7 +511,7 @@ function renderCat(){
  $('catT').innerHTML=[...S.cat].sort((a,b)=>a.cat.localeCompare(b.cat)||label(a).localeCompare(label(b))).map(c=>`<tr><td><b>${esc(label(c))}</b></td><td>${esc(c.ref)}</td><td>${esc(c.cat)}</td><td class="n">${eur(c.pa)}</td><td class="n">${eur(c.pv)}</td><td class="n">${eur(c.pv-c.pa)}</td><td>${esc(c.statut)}</td><td><button class="del" style="color:var(--blue)" type="button" data-edit="${esc(c.ref)}">Modifier</button></td></tr>`).join('');
 }
 function render(){fillSelects();const v=location.hash.slice(1)||'accueil';
- if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='appareils')renderAppareils();else if(['compte','mesventes','acces'].includes(v))renderCompte();else if(v.startsWith('adm-'))renderAdmin(v);else if(v.startsWith('eq-'))renderEquip(v);else if(v==='buvette'||v==='bv-gestion'){if(window.bvRender)window.bvRender(v)}else if(v==='accueil')$('helloT').textContent=$('vNom').textContent?'Bonjour '+$('vNom').textContent+', bienvenue dans l\'Espace de Gestion LMSTT':'Bienvenue dans l\'Espace de Gestion LMSTT'}
+ if(v==='caisse')renderCart();else if(v==='stocks')renderStocks();else if(v==='ventes')renderVentes();else if(v==='entrees')renderMv();else if(v==='bilan')renderBilan();else if(v==='catalogue')renderCat();else if(v==='appareils')renderAppareils();else if(['compte','mesventes','acces'].includes(v))renderCompte();else if(v.startsWith('adm-'))renderAdmin(v);else if(v.startsWith('eq-'))renderEquip(v);else if(v==='buvette'||v==='bv-gestion'||v==='bv-historique'){if(window.bvRender)window.bvRender(v)}else if(v==='accueil')$('helloT').textContent=$('vNom').textContent?'Bonjour '+$('vNom').textContent+', bienvenue dans l\'Espace de Gestion LMSTT':'Bienvenue dans l\'Espace de Gestion LMSTT'}
 
 /* ---------- actions ---------- */
 $('vMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;for(const x of $('vMode').children)x.classList.toggle('on',x===b);calcTot()};
@@ -716,5 +718,5 @@ addEventListener('online',()=>{if(PIN)load()});addEventListener('offline',()=>{s
 window.LM={rpc,toast,logout,get PIN(){return PIN},get READY(){return READY},get ADM(){return ADM}};
 }
 </script>
-<script src="buvette.js?v=24"></script>
+<script src="buvette.js?v=25"></script>
 </body></html>

@@ -1,6 +1,6 @@
 // Boutique LMSTT : page toujours à jour quand le réseau est là, version en cache sinon.
-const CACHE='lmstt-v25';
-const FICHIERS=['./','./index.html','./logo.png','./icon-192.png','./icon-512.png','./manifest.webmanifest','./buvette.js?v=24'];
+const CACHE='lmstt-v26';
+const FICHIERS=['./','./index.html','./logo.png','./icon-192.png','./icon-512.png','./manifest.webmanifest','./buvette.js?v=25'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FICHIERS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))));self.clients.claim()});
 self.addEventListener('fetch',e=>{
