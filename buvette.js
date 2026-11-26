@@ -54,7 +54,7 @@ function caisse(){badge();eveil();const s=D.session;
  const tot=cart.reduce((a,l)=>a+l.q*l.p,0),nb=id=>(cart.find(l=>l.id===id)||{}).q||0;
  const tile=p=>{const n=nb(p.id);return `<button type="button" class="bvtile${n?' sel':''}${p.stock<=p.seuil&&p.seuil>0?' bas':''}" data-p="${p.id}">${p.photo?`<img src="${E(p.photo)}" alt="">`:''}${n?`<span class="bvmoins" data-m="${p.id}" role="button" aria-label="Retirer un">−</span><span class="bvn">${n}</span>`:''}<span class="bvlab"><b>${E(p.nom)}</b><span>${eur(px(p))}</span></span></button>`};
  const grp=[...cats.map(c=>[c.nom,prods.filter(p=>p.categorie_id===c.id)]),['Autres',prods.filter(p=>!cats.some(c=>c.id===p.categorie_id))]].filter(x=>x[1].length);
- g('bvBox').innerHTML=`<div class="bvbar"><button type="button" class="alt" id="bvHome">← Retour</button><span id="bvSync" class="tag t-a" hidden></span></div>
+ g('bvBox').innerHTML=`<div class="bvbar">${D.resp?'<button type="button" class="alt" id="bvHome">← Caisse manifestation</button>':''}<span id="bvSync" class="tag t-a" hidden></span></div>
  <div class="bvlay"><div>${grp.map(([t,l])=>`<h3 class="bvsec">${E(t)}</h3><div class="bvtiles">${l.map(tile).join('')}</div>`).join('')||'<p class="muted">Aucun produit. Un responsable doit en créer dans Buvette › Gestion.</p>'}</div>
  <div class="card bvcart"><h3>Panier</h3>${cart.length?`<ul class="bvl">${cart.map(l=>`<li><span>${l.q}× ${E(l.n)}</span><span></span><span>${eur(l.q*l.p)}</span></li>`).join('')}</ul>`:'<p class="muted">Touche un produit : 1 touche = 1 article.</p>'}
  <div class="bvtot">${eur(tot)}</div>
