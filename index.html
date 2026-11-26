@@ -69,6 +69,8 @@ body.no-caisse .need-caisse,body.no-stocks .need-stocks,body.no-ventes .need-ven
 .bvsec{margin:14px 0 8px;font:700 20px Oswald,sans-serif;color:var(--blue)}.bvp{min-height:64px}
 .bvph{width:90px;height:90px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
 body.no-bvresp .need-bvresp{display:none!important}body.bvonly #nav,body.bvonly.no-bvresp #subB,body.bvonly #status,body.bvonly .foot{display:none!important}
+@media(max-width:760px){#bvBox .bvcart{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:20;max-height:75vh;overflow:auto;border-radius:16px 16px 0 0;box-shadow:0 -6px 24px #0004;padding:10px 12px}
+#bvBox .bvcart h3,#bvBox .bvcart>p.muted{display:none}#bvBox .bvcart .bvl{max-height:18vh;overflow:auto}#bvBox .bvtot{margin:4px 0 8px;font-size:28px}#bvBox .bvvide{min-height:32px;margin-top:6px}#bvBox .bvlay{padding-bottom:190px}}
 #bvFlash{position:fixed;inset:auto 0 30% 0;margin:auto;width:min(90vw,520px);background:var(--ok);color:#fff;font:700 34px Oswald,sans-serif;text-align:center;padding:28px 16px;border-radius:18px;box-shadow:0 10px 40px #0006;z-index:99;display:none}#bvFlash.on{display:block}
 @media print{body.bvprinting *{visibility:hidden}body.bvprinting #bvRecap,body.bvprinting #bvRecap *{visibility:visible}body.bvprinting #bvRecap{position:absolute;inset:0;border:0}body.bvprinting .noprint{display:none}}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}#who{font-size:14px;opacity:.9}button.out{color:#fff;border-color:#fff;min-height:36px;padding:6px 12px}
